@@ -1,13 +1,22 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 #include "geometry.h"
+#include "object.h"
 
 int main() {
-    Vector2D v1(2,3);
-    Vector2D v2(-1,1.5);
-    std::cout << v1 + v2 << std::endl;
-    std::cout << -v2 << std::endl;
-    std::cout << v1.magnitude() << std::endl;
+    std::vector<Object> objects;
+
+    Vector2D x(0,0);
+    Vector2D v(1,1);
+    Vector2D a(0,0);
+    double m = 1;
+    Object o(x,v,a,m);
+
+    objects.push_back(o);
+    std::cout << o << std::endl;
+    o.step(objects, 0.05);
+    std::cout << o << std::endl;
     return 0;
 }
