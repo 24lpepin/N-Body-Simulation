@@ -3,7 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "./SFML/include",
+                "${workspaceFolder}/build/_deps/sfml-src/include"
             ],
             "defines": [
                 "_DEBUG",
