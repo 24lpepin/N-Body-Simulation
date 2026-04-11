@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
-
 #include "geometry.h"
+#include <./SFML/Graphics.hpp>
 
 Vector2D::Vector2D(double x, double y): x(x), y(y) { }
 
@@ -41,3 +41,5 @@ Vector2D operator*(double c, const Vector2D& v) {
 Vector2D operator*(const Vector2D& v, double c) {
     return Vector2D(c * v.x, c * v.y);
 }
+
+Vector2D::operator sf::Vector2f() const { return sf::Vector2f(x, y); }
