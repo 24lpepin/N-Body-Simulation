@@ -17,6 +17,7 @@ class Object {
         Object(Vector2D position, Vector2D velocity, Vector2D acceleration, float mass);
 
         friend std::ostream& operator<<(std::ostream& os, const Object& o);
+        friend bool operator==(const Object& o1, const Object& o2);
 
         /**
          * Takes in a list of simulation objects and a timestep dt and updates the object's 
@@ -24,9 +25,11 @@ class Object {
          */
         void step(const std::vector<Object>& objects, float dt);
 
-    private:
+    // private:
+        Vector2D compute_force(const std::vector<Object>& objects);
+
         /**
          * Updates the object's acceleration based on the position of the given list of objects.
          */
-        void update_acceleration(const std::vector<Object>& objects);
+        void update_acceleration(const Vector2D& force);
 };

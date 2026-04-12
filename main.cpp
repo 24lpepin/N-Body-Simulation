@@ -9,7 +9,7 @@
 
 void draw_object(sf::RenderWindow& window, const Object& object) {
     sf::CircleShape shape(10.f);
-    std::cout << object.position << std::endl;
+    // std::cout << object.position << object.velocity << object.acceleration << std::endl;
     shape.setPosition(object.position);
     shape.setFillColor(sf::Color::White);
     window.draw(shape);
@@ -17,21 +17,20 @@ void draw_object(sf::RenderWindow& window, const Object& object) {
 
 int main()
 {
-    std::cout << "running";
     sf::RenderWindow window(sf::VideoMode({800, 800}), "Orbital Simulation");
     window.setPosition({100,100});
     window.setFramerateLimit(60);
     
-    Vector2D position1(60, 60);
-    Vector2D position2(140, 60);
-    Vector2D velocity(0, 1);
-    Vector2D acceleration(0, 0);
-    double m = std::pow(10,9);
-    Object object1(position1, velocity, acceleration, m);
-    Object object2(position2, velocity, acceleration, m);
+    const float dt = 0.025f;
+    double m = std::pow(10, 16);
+
+    Object object1({400, 300}, {70, 0}, {0, 0}, m / 10000);
+    Object object2({400, 550}, {-60, 0}, {0, 0}, m / 100);
+    Object object3({400, 400}, {00, 0}, {0, 0}, m);
     std::vector<Object> objects;
     objects.push_back(object1);
     objects.push_back(object2);
+    objects.push_back(object3);
 
     while (window.isOpen())
     {
@@ -42,10 +41,13 @@ int main()
         }
 
         window.clear();
-        draw_object(window, object1);
-        draw_object(window, object2);
-        object1.step(objects, .05);
-        object2.step(objects, .05);
+        std::vector<Object> next = objects;
+        for (int i = 0; i < objects.size(); i++) {
+            draw_object(window, next[i]);
+            std::cout << "obj " << i << " pos: " << next[i].position << " vel: " << next[i].velocity << std::endl;
+            next[i].step(objects, dt);
+        }
+        objects = next;
         window.display();
     }
 

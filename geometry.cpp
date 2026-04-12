@@ -2,6 +2,7 @@
 #include <cmath>
 #include "geometry.h"
 #include <./SFML/Graphics.hpp>
+#include "const.h"
 
 Vector2D::Vector2D(double x, double y): x(x), y(y) { }
 
@@ -40,6 +41,10 @@ Vector2D operator*(double c, const Vector2D& v) {
 
 Vector2D operator*(const Vector2D& v, double c) {
     return Vector2D(c * v.x, c * v.y);
+}
+
+bool operator==(const Vector2D& v1, const Vector2D& v2) {
+    return std::abs(v1.x - v2.x) <= EPSILON && std::abs(v1.y - v2.y) <= EPSILON; 
 }
 
 Vector2D::operator sf::Vector2f() const { return sf::Vector2f(x, y); }
