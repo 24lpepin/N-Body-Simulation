@@ -21,30 +21,24 @@ bool operator==(const Object& o1, const Object& o2) {
 /**
  * Uses standard implementation of velocity Verlet algorithm.
  */
-void Object::step(const std::vector<Object>& objects, float dt) {
+void Object::step(const std::vector<Object>& objects, const Vector2D force, float dt) {
     velocity = velocity + 0.5 * acceleration * dt;
     position = position + velocity * dt;
-    if (force.has_value()) { // Ensures compute_force is called in main before stepping
-        update_acceleration(*force);
-    }
-    else {
-        throw "Force must be computed before calling step";
-    }
+    update_acceleration(force);
     velocity = velocity + 0.5 * acceleration * dt;
-    force.reset(); // Reset the force to empty
 }
 
-void Object::compute_force(const std::vector<Object>& objects) {
-    Vector2D _force = Vector2D(0, 0);
+Vector2D Object::compute_force(const std::vector<Object>& objects) {
+    Vector2D force = Vector2D(0, 0);
     for (const Object& object : objects) {
         if (object == *this) continue;
         Vector2D r = object.position - position;
         float r2 = r.x * r.x + r.y * r.y + EPSILON * EPSILON;
         float r_mag = sqrt(r2);
         float f = G * object.mass * mass / r2;
-        _force = _force + (f / r_mag) * r;
+        force = force + (f / r_mag) * r;
     }
-    force = _force;
+    return force;
 }
 
 /**

@@ -45,10 +45,10 @@ int main()
         window.clear();
         for (int i = 0; i < objects.size(); i++) {
             // Object obj = objects[i];
-            objects[i].compute_force(objects);
+            Vector2D force = objects[i].compute_force(objects);
             draw_object(window, objects[i]);
             std::cout << "obj " << i << " pos: " << objects[i].position << " vel: " << objects[i].velocity << std::endl;
-            objects[i].step(objects, dt);
+            objects[i].step(objects, force, dt);
         }
         window.display();
     }
