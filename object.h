@@ -25,11 +25,16 @@ class Object {
          */
         void step(const std::vector<Object>& objects, float dt);
 
-    // private:
-        Vector2D compute_force(const std::vector<Object>& objects);
+        /**
+         * Computes the net force on the object based on the positions of the given list of objects.
+         */
+        void compute_force(const std::vector<Object>& objects);
+
+    private:
+        std::optional<Vector2D> force;
 
         /**
-         * Updates the object's acceleration based on the position of the given list of objects.
+         * Updates the object's acceleration based on the calculated net force.
          */
         void update_acceleration(const Vector2D& force);
 };

@@ -27,6 +27,8 @@ int main()
     Object object1({400, 300}, {70, 0}, {0, 0}, m / 10000);
     Object object2({400, 550}, {-60, 0}, {0, 0}, m / 100);
     Object object3({400, 400}, {00, 0}, {0, 0}, m);
+    // Object object1({400, 400}, {0, 0}, {0, 0}, m);
+    // Object object2({400, 500}, {70, 0}, {0, 0}, m / 1000);
     std::vector<Object> objects;
     objects.push_back(object1);
     objects.push_back(object2);
@@ -41,13 +43,13 @@ int main()
         }
 
         window.clear();
-        std::vector<Object> next = objects;
         for (int i = 0; i < objects.size(); i++) {
-            draw_object(window, next[i]);
-            std::cout << "obj " << i << " pos: " << next[i].position << " vel: " << next[i].velocity << std::endl;
-            next[i].step(objects, dt);
+            // Object obj = objects[i];
+            objects[i].compute_force(objects);
+            draw_object(window, objects[i]);
+            std::cout << "obj " << i << " pos: " << objects[i].position << " vel: " << objects[i].velocity << std::endl;
+            objects[i].step(objects, dt);
         }
-        objects = next;
         window.display();
     }
 
