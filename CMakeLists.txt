@@ -9,5 +9,5 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SFML)
 
-add_executable(orbital_simulation main.cpp geometry.cpp object.cpp)
+add_executable(orbital_simulation src/main.cpp src/geometry.cpp src/object.cpp)
 target_link_libraries(orbital_simulation PRIVATE sfml-graphics sfml-window sfml-system)
