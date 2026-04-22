@@ -44,6 +44,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode({800, 800}), "Orbital Simulation");
     window.setPosition({100,100});
     window.setFramerateLimit(60);
+
+    bool paused = false;
     
     const float dt = 0.025f;
     
@@ -55,8 +57,45 @@ int main()
     {
         while (const std::optional event = window.pollEvent())
         {
-            if (event->is<sf::Event::Closed>())
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
+            }
+
+            if (event->is<sf::Event::KeyPressed>()) {
+                const sf::Keyboard::Key code = event->getIf<sf::Event::KeyPressed>()->code;
+
+                switch (code)
+                {
+                case sf::Keyboard::Key::Escape: // Close window
+                    window.close();
+                    break;
+
+                case sf::Keyboard::Key::P: // Pause window
+                    paused = !paused;
+                    break;
+                
+                case sf::Keyboard::Key::C: // Clear window
+                    objects.clear();
+                    paths.clear();
+                    window.clear();
+                    break;
+
+                case sf::Keyboard::Key::B: // Add new objects
+                    std::vector<Object> new_objects = create_objects();
+                    for (Object object : new_objects) {
+                        objects.push_back(object);
+                        paths.push_back(std::deque<sf::Vector2f>());
+                        draw_object(window, object);
+                    }
+                    break;
+                }
+            }
+        }
+
+        window.display(); // redraw window here incase window is paused.
+
+        if (paused) {
+            continue;
         }
 
         window.clear();
@@ -77,7 +116,6 @@ int main()
             draw_path(window, path);
             
         }
-        window.display();
     }
 
     return 0;
