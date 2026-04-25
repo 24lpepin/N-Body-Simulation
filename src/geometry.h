@@ -25,6 +25,8 @@ class Vector2D {
         friend Vector2D operator*(double c, const Vector2D& v);
         friend Vector2D operator*(const Vector2D& v, double c);
 
+        friend Vector2D operator/(const Vector2D& v, double c);
+
         friend bool operator==(const Vector2D& v1, const Vector2D& v2);
 
         operator sf::Vector2f() const;

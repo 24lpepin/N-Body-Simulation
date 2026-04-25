@@ -43,6 +43,10 @@ Vector2D operator*(const Vector2D& v, double c) {
     return Vector2D(c * v.x, c * v.y);
 }
 
+Vector2D operator/(const Vector2D& v, double c) {
+    return Vector2D(v.x / c, v.y / c);
+}
+
 bool operator==(const Vector2D& v1, const Vector2D& v2) {
     return std::abs(v1.x - v2.x) <= EPSILON && std::abs(v1.y - v2.y) <= EPSILON; 
 }

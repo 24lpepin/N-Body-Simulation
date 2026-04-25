@@ -39,6 +39,35 @@ std::vector<Object> create_objects() {
     return std::vector<Object> {object1, object2, object3};
 }
 
+double pairwise_potential(const Object& a, const Object& b) {
+    double r = (a.position - b.position).magnitude();
+    return -G * a.mass * b.mass / r;
+}
+
+double compute_total_potential_energy(const std::vector<Object>& objects) {
+    double total = 0.0;
+
+    for (size_t i = 0; i < objects.size(); ++i) {
+        for (size_t j = i + 1; j < objects.size(); ++j) {
+            total += pairwise_potential(objects[i], objects[j]);
+        }
+    }
+
+    return total;
+}
+
+double compute_total_energy(const std::vector<Object>& objects) {
+    double kinetic = 0.0;
+
+    for (const Object& obj : objects) {
+        kinetic += obj.get_kinetic_energy();
+    }
+
+    double potential = compute_total_potential_energy(objects);
+
+    return kinetic + potential;
+}
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode({800, 800}), "Orbital Simulation");
@@ -52,6 +81,8 @@ int main()
     std::vector<Object> objects = create_objects();
 
     std::vector<std::deque<sf::Vector2f>> paths(objects.size());
+
+    const double initial_energy = compute_total_energy(objects);
 
     while (window.isOpen())
     {
@@ -110,7 +141,11 @@ int main()
 
             Vector2D force = obj.compute_force(objects);
             draw_object(window, obj);
-            std::cout << "obj " << i << " pos: " << objects[i].position << " vel: " << objects[i].velocity << std::endl;
+            std::cout << "obj " << i 
+                      << " pos: " << objects[i].position 
+                      << " vel: " << objects[i].velocity 
+                      << " energy drift: " << 100 * (initial_energy - compute_total_energy(objects)) / initial_energy << "%"
+                      << std::endl;
             obj.step(objects, force, dt);
 
             draw_path(window, path);

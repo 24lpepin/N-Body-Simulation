@@ -4,7 +4,7 @@
 #include "object.h"
 #include "const.h"
 
-Object::Object(Vector2D position, Vector2D velocity, Vector2D acceleration, float mass): position(position), 
+Object::Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass): position(position), 
     velocity(velocity), acceleration(acceleration), mass(mass) {}
 
 std::ostream& operator<<(std::ostream& os, const Object& o) {
@@ -21,7 +21,7 @@ bool operator==(const Object& o1, const Object& o2) {
 /**
  * Uses standard implementation of velocity Verlet algorithm.
  */
-void Object::step(const std::vector<Object>& objects, const Vector2D force, float dt) {
+void Object::step(const std::vector<Object>& objects, const Vector2D force, double dt) {
     velocity = velocity + 0.5 * acceleration * dt;
     position = position + velocity * dt;
     update_acceleration(force);
@@ -33,12 +33,16 @@ Vector2D Object::compute_force(const std::vector<Object>& objects) {
     for (const Object& object : objects) {
         if (object == *this) continue;
         Vector2D r = object.position - position;
-        float r2 = r.x * r.x + r.y * r.y + EPSILON * EPSILON;
-        float r_mag = sqrt(r2);
-        float f = G * object.mass * mass / r2;
+        double r2 = r.x * r.x + r.y * r.y + EPSILON * EPSILON;
+        double r_mag = sqrt(r2);
+        double f = G * object.mass * mass / r2;
         force = force + (f / r_mag) * r;
     }
     return force;
+}
+
+double Object::get_kinetic_energy() const {
+    return 0.5 * mass * (velocity.x * velocity.x + velocity.y * velocity.y);
 }
 
 /**

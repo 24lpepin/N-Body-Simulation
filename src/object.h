@@ -12,9 +12,9 @@ class Object {
         Vector2D position;
         Vector2D velocity;
         Vector2D acceleration;
-        float mass;
+        double mass;
 
-        Object(Vector2D position, Vector2D velocity, Vector2D acceleration, float mass);
+        Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass);
 
         friend std::ostream& operator<<(std::ostream& os, const Object& o);
         friend bool operator==(const Object& o1, const Object& o2);
@@ -23,12 +23,14 @@ class Object {
          * Takes in a list of simulation objects and a timestep dt and updates the object's 
          * position, velocity, and acceleration.
          */
-        void step(const std::vector<Object>& objects, Vector2D force, float dt);
+        void step(const std::vector<Object>& objects, Vector2D force, double dt);
 
         /**
          * Computes the net force on the object based on the positions of the given list of objects.
          */
         Vector2D compute_force(const std::vector<Object>& objects);
+
+        double get_kinetic_energy() const;
 
     private:
         /**
