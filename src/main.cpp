@@ -72,20 +72,27 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode({800, 800}), "Orbital Simulation");
     window.setPosition({100,100});
-    window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
 
     bool paused = false;
     
-    const float dt = 0.025f;
+    const double dt = 0.00025f;
+    double time = 0.0f;
+    int steps = 0;
+    int buffer = 5;
     
     std::vector<Object> objects = create_objects();
 
     std::vector<std::deque<sf::Vector2f>> paths(objects.size());
 
+    sf::Clock clock;
+
     const double initial_energy = compute_total_energy(objects);
 
     while (window.isOpen())
     {
+        sf::Time elapsed = clock.restart();
+        float fps = 1.0f / elapsed.asSeconds();
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>()) {
@@ -129,28 +136,46 @@ int main()
             continue;
         }
 
-        window.clear();
+        if (steps % buffer == 0) { window.clear(); }
+        
         for (int i = 0; i < objects.size(); i++) {
             Object& obj = objects[i];
 
-            std::deque<sf::Vector2f>& path = paths[i];
-            path.push_back(obj.position);
-            if (path.size() > MAX_PATH_LEN) {
-                path.pop_front();
+            Vector2D force = obj.compute_force(objects);
+
+            if (steps % buffer == 0) {
+
+                std::deque<sf::Vector2f>& path = paths[i];
+                path.push_back(obj.position);
+                if (path.size() > MAX_PATH_LEN) {
+                    path.pop_front();
+                }
+
+                draw_object(window, obj);
+                draw_path(window, path);
             }
 
-            Vector2D force = obj.compute_force(objects);
-            draw_object(window, obj);
-            std::cout << "obj " << i 
-                      << " pos: " << objects[i].position 
-                      << " vel: " << objects[i].velocity 
-                      << " energy drift: " << 100 * (initial_energy - compute_total_energy(objects)) / initial_energy << "%"
-                      << std::endl;
-            obj.step(objects, force, dt);
+            if (steps % (buffer * 250) == 0) {
 
-            draw_path(window, path);
+                double drift = 100 * (initial_energy - compute_total_energy(objects)) / initial_energy;
+
+                std::cout << std::fixed << std::setprecision(2);
+
+                std::cout << "time " << std::setw(5) << time << "  "
+                          << "obj " << std::setw(2) << i << "  "
+                          << "pos: (" << std::setw(7) << obj.position.x << ", " << std::setw(7) << obj.position.y << ")  "
+                          << "vel: (" << std::setw(7) << obj.velocity.x << ", " << std::setw(7) << obj.velocity.y << ")  "
+                          << "energy drift: " << std::setw(5) << drift << "%\n";
+            }
+
+            obj.step(objects, force, dt);
             
         }
+
+        if (steps % (buffer * 250) == 0) { std::cout << "fps: " << fps << std::endl; }
+
+        steps += 1;
+        time += dt;
     }
 
     return 0;
