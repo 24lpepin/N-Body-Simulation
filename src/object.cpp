@@ -1,11 +1,15 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 #include "geometry.h"
 #include "object.h"
 #include "const.h"
 
-Object::Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass): position(position), 
-    velocity(velocity), acceleration(acceleration), mass(mass) {}
+Object::Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass): 
+    position(position), velocity(velocity), acceleration(acceleration), mass(mass) 
+{ 
+    path = std::deque<sf::Vector2f>();
+}
 
 std::ostream& operator<<(std::ostream& os, const Object& o) {
     return os << "position: " << o.position << std::endl 
@@ -18,14 +22,11 @@ bool operator==(const Object& o1, const Object& o2) {
             (o1.acceleration == o2.acceleration) && (o1.mass == o2.mass);
 }
 
-/**
- * Uses standard implementation of velocity Verlet algorithm.
- */
-void Object::step(const std::vector<Object>& objects, const Vector2D force, double dt) {
-    velocity = velocity + 0.5 * acceleration * dt;
-    position = position + velocity * dt;
-    update_acceleration(force);
-    velocity = velocity + 0.5 * acceleration * dt;
+void Object::update_path() {
+    path.push_back(position);
+    if (path.size() > MAX_PATH_LEN) {
+        path.pop_front();
+    }
 }
 
 Vector2D Object::compute_force(const std::vector<Object>& objects) {

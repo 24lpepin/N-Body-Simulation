@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <vector>
 #include <queue>
@@ -6,11 +7,13 @@
 #include "geometry.h"
 #include "object.h"
 #include "const.h"
+#include "simulation.h"
 
 #include <./SFML/Graphics.hpp>
 
 void draw_object(sf::RenderWindow& window, const Object& object) {
-    const float radius = 10.f;
+    const double radius = 10.f * (object.mass / 2000 * std::pow(10, -15)) + 2.5; // Radius depends on mass of object
+    // const double radius = 10.f;
     sf::CircleShape shape(radius);
     // std::cout << object.position << object.velocity << object.acceleration << std::endl;
     shape.setPosition(object.position - Vector2D(radius, radius)); // Subtract radius to center object
@@ -27,15 +30,18 @@ void draw_path(sf::RenderWindow& window, const std::deque<sf::Vector2f>& path) {
     window.draw(lines);
 }
 
-std::vector<Object> create_objects() {
+std::vector<Object> create_objects(int n = 1) {
     double m = std::pow(10, 16);
 
-    Object object1({400, 300}, {70, 0}, {0, 0}, m / 10000);
-    Object object2({400, 550}, {-60, 0}, {0, 0}, m / 100);
-    Object object3({400, 400}, {00, 0}, {0, 0}, m);
-    // Object object1({400, 400}, {0, 0}, {0, 0}, m);
-    // Object object2({400, 500}, {70, 0}, {0, 0}, m / 1000);
+    // Object object1({400, 300}, {70, 0}, {0, 0}, m / 10000);
+    // Object object2({400, 550}, {-60, 0}, {0, 0}, m / 100);
+    // Object object3({400, 300}, {-80, 0}, {0, 0}, m / 10000);
+    Object object3({400, 300}, {-80, 0}, {0, 0}, m);
+    Object object1({400, 400}, {0, 0}, {0, 0}, m);
+    // Object object2({400, 450}, {110, 0}, {0, 0}, m / 10000);
+    Object object2({400, 450}, {110, 0}, {0, 0}, m);
 
+    // return std::vector<Object> {object1, object2};
     return std::vector<Object> {object1, object2, object3};
 }
 
@@ -76,18 +82,17 @@ int main()
 
     bool paused = false;
     
-    const double dt = 0.00025f;
+    const double dt = 0.0002f;
     double time = 0.0f;
     int steps = 0;
-    int buffer = 5;
+    const int draw_buffer = 10;
+    const int print_buffer = draw_buffer * 200;
     
-    std::vector<Object> objects = create_objects();
-
-    std::vector<std::deque<sf::Vector2f>> paths(objects.size());
+    Simulation simulation(create_objects());
 
     sf::Clock clock;
 
-    const double initial_energy = compute_total_energy(objects);
+    double initial_energy = compute_total_energy(simulation.objects);
 
     while (window.isOpen())
     {
@@ -113,18 +118,14 @@ int main()
                     break;
                 
                 case sf::Keyboard::Key::C: // Clear window
-                    objects.clear();
-                    paths.clear();
+                    simulation.clear();
                     window.clear();
                     break;
 
-                case sf::Keyboard::Key::B: // Add new objects
-                    std::vector<Object> new_objects = create_objects();
-                    for (Object object : new_objects) {
-                        objects.push_back(object);
-                        paths.push_back(std::deque<sf::Vector2f>());
-                        draw_object(window, object);
-                    }
+                case sf::Keyboard::Key::B: // Adds a new object in a random location
+                    Object object = simulation.add_random_object();
+                    initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
+                    draw_object(window, object);
                     break;
                 }
             }
@@ -136,28 +137,20 @@ int main()
             continue;
         }
 
-        if (steps % buffer == 0) { window.clear(); }
+        if (steps % draw_buffer == 0) { window.clear(); }
         
-        for (int i = 0; i < objects.size(); i++) {
-            Object& obj = objects[i];
+        for (int i = 0; i < simulation.objects.size(); i++) {
+            Object& obj = simulation.objects[i];
 
-            Vector2D force = obj.compute_force(objects);
-
-            if (steps % buffer == 0) {
-
-                std::deque<sf::Vector2f>& path = paths[i];
-                path.push_back(obj.position);
-                if (path.size() > MAX_PATH_LEN) {
-                    path.pop_front();
-                }
-
+            if (steps % draw_buffer== 0) {
+                simulation.update_paths();
                 draw_object(window, obj);
-                draw_path(window, path);
+                draw_path(window, obj.path);
             }
 
-            if (steps % (buffer * 250) == 0) {
+            if (steps % print_buffer == 0) {
 
-                double drift = 100 * (initial_energy - compute_total_energy(objects)) / initial_energy;
+                double drift = 100 * (initial_energy - compute_total_energy(simulation.objects)) / initial_energy;
 
                 std::cout << std::fixed << std::setprecision(2);
 
@@ -165,14 +158,14 @@ int main()
                           << "obj " << std::setw(2) << i << "  "
                           << "pos: (" << std::setw(7) << obj.position.x << ", " << std::setw(7) << obj.position.y << ")  "
                           << "vel: (" << std::setw(7) << obj.velocity.x << ", " << std::setw(7) << obj.velocity.y << ")  "
-                          << "energy drift: " << std::setw(5) << drift << "%\n";
+                          << "energy drift: " << std::setw(5) << drift << "%" << std::endl;
             }
 
-            obj.step(objects, force, dt);
+            simulation.step(dt);
             
         }
 
-        if (steps % (buffer * 250) == 0) { std::cout << "fps: " << fps << std::endl; }
+        if (steps % print_buffer == 0) { std::cout << "fps: " << fps << std::endl; }
 
         steps += 1;
         time += dt;
