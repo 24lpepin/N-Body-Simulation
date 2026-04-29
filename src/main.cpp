@@ -1,8 +1,10 @@
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <cmath>
 #include <vector>
 #include <queue>
+#include <format>
 
 #include "geometry.h"
 #include "object.h"
@@ -30,19 +32,25 @@ void draw_path(sf::RenderWindow& window, const std::deque<sf::Vector2f>& path) {
     window.draw(lines);
 }
 
-std::vector<Object> create_objects(int n = 1) {
+std::vector<Object> create_objects(int n = 3) {
     double m = std::pow(10, 16);
 
-    // Object object1({400, 300}, {70, 0}, {0, 0}, m / 10000);
-    // Object object2({400, 550}, {-60, 0}, {0, 0}, m / 100);
-    // Object object3({400, 300}, {-80, 0}, {0, 0}, m / 10000);
-    Object object3({400, 300}, {-80, 0}, {0, 0}, m);
-    Object object1({400, 400}, {0, 0}, {0, 0}, m);
-    // Object object2({400, 450}, {110, 0}, {0, 0}, m / 10000);
-    Object object2({400, 450}, {110, 0}, {0, 0}, m);
+    if (n == 2) {
+        Object object1({400, 300}, {700, 0}, {0, 0}, m / 500);
+        Object object2({400, 400}, {0, 0}, {0, 0}, 100 * m);
+        return std::vector<Object> {object1, object2};
+    }
 
-    // return std::vector<Object> {object1, object2};
-    return std::vector<Object> {object1, object2, object3};
+    if (n == 3) {
+        Object object1({400, 400}, {0, 40}, {0, 0}, m);
+        Object object2({400, 450}, {80, 0}, {0, 0}, m);
+        Object object3({400, 300}, {-60, 0}, {0, 0}, m);
+        return std::vector<Object> {object1, object2, object3};
+    }
+
+    else {
+        return std::vector<Object> {Object({400, 400}, {0, 0}, {0, 0}, m)};
+    }
 }
 
 double pairwise_potential(const Object& a, const Object& b) {
@@ -77,24 +85,35 @@ double compute_total_energy(const std::vector<Object>& objects) {
 int main()
 {
     sf::RenderWindow window(sf::VideoMode({800, 800}), "Orbital Simulation");
+    // sf::RenderWindow window(sf::VideoMode({8, 8}), "Orbital Simulation");
     window.setPosition({100,100});
     window.setVerticalSyncEnabled(true);
 
     bool paused = false;
     
-    const double dt = 0.0002f;
+    const double dt = 0.1f;
+    // const double dt = 0.0001f;
     double time = 0.0f;
     int steps = 0;
     const int draw_buffer = 10;
     const int print_buffer = draw_buffer * 200;
+    const int data_buffer = 50;
+
+    std::ofstream output("../output/data" + std::to_string(dt) + ".csv");
+    if (!output.is_open()) {
+        std::cerr << "Error: Could not open file." << std::endl;
+        return 1;
+    }
+
+    output << "time,drift\n";
     
-    Simulation simulation(create_objects());
+    Simulation simulation(create_objects(2));
 
     sf::Clock clock;
 
     double initial_energy = compute_total_energy(simulation.objects);
 
-    while (window.isOpen())
+    while (window.isOpen() && time < dt * 25000)
     {
         sf::Time elapsed = clock.restart();
         float fps = 1.0f / elapsed.asSeconds();
@@ -169,7 +188,14 @@ int main()
 
         steps += 1;
         time += dt;
+
+        if (steps % data_buffer == 0) {
+            double drift = 100 * (initial_energy - compute_total_energy(simulation.objects)) / initial_energy;
+            output << time << "," << drift << "\n";
+        }
     }
+
+    output.close();
 
     return 0;
 }
