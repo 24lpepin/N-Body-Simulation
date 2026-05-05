@@ -8,28 +8,9 @@
 #include "object.h"
 #include "const.h"
 #include "simulation.h"
+#include "renderer.h"
 
 #include <./SFML/Graphics.hpp>
-
-void draw_object(sf::RenderWindow& window, const Object& object) {
-    // const double radius = 10.f * (object.mass / 2000 * std::pow(10, -15)) + 2.5; // Radius depends on mass of object
-    const double radius = 10.f;
-    sf::CircleShape shape(radius);
-    // std::cout << object.position << object.velocity << object.acceleration << std::endl;
-    const Vector2D position = 100 * (object.position) - Vector2D(radius, radius) + Vector2D(400, 400);
-    shape.setPosition(position); // Subtract radius to center object
-    shape.setFillColor(sf::Color::White);
-    window.draw(shape);
-}
-
-void draw_path(sf::RenderWindow& window, const std::deque<sf::Vector2f>& path) {
-    sf::VertexArray lines(sf::PrimitiveType::LineStrip, path.size());
-    for (size_t i = 0; i < path.size(); ++i) {
-        lines[i].position = path[i];
-        lines[i].color = sf::Color(255, 255, 255, i * 255 / path.size());
-    }
-    window.draw(lines);
-}
 
 std::vector<Object> create_objects(int n = 1) {
     double m = std::pow(10, 16);
@@ -94,6 +75,8 @@ int main()
     window.setPosition({100,100});
     window.setVerticalSyncEnabled(true);
 
+    Renderer renderer(window);
+
     bool paused = false;
 
     // 100 pixels = 1 au
@@ -144,7 +127,7 @@ int main()
                 case sf::Keyboard::Key::B: // Adds a new object in a random location
                     Object object = simulation.add_random_object();
                     initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
-                    draw_object(window, object);
+                    renderer.draw_object(object);
                     break;
                 }
             }
@@ -163,8 +146,8 @@ int main()
 
             if (steps % draw_buffer== 0) {
                 simulation.update_paths();
-                draw_object(window, obj);
-                draw_path(window, obj.path);
+                renderer.draw_object(obj);
+                renderer.draw_path(obj.path);
             }
 
             if (steps % print_buffer == 0) {
