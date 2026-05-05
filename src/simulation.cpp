@@ -35,6 +35,13 @@ std::vector<Object> Simulation::add_random_objects(int n) {
     return new_objects;
 }
 
+std::vector<Object> Simulation::add_objects(const std::vector<Object>& objs) {
+    for (auto& obj : objs) {
+        objects.push_back(obj);
+    }
+    return objs;
+}
+
 void Simulation::step(double dt) {
     // Compute forces at t
     for (auto& obj : objects) {

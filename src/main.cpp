@@ -23,18 +23,30 @@ std::vector<Object> create_objects(int n = 1) {
                 {{1, 0}, {0, 6.28}, 3 * pow(10, -6)}, // earth
             };
 
-        case 2:
+        case 2: // Figure 8
             Vector2D position(0.97000436, -0.24308753);
             Vector2D velocity(0.4662036850, 0.4323657300);
-            velocity = velocity * 2 * M_PI;
+            velocity = velocity * sqrt(G); // Figure 8 configuration uses G=1. We need to normalize for our G
             return std::vector<Object> {
                 {position, velocity, 1}, 
                 {-position, velocity, 1}, 
                 {{0,0}, -2 * velocity, 1},
             };
-    }
 
-    
+        // case 3: // 4 bodies
+        //     Vector2D position1(1.7, -1);
+        //     Vector2D position2(-1.2, 0.5);
+        //     Vector2D velocity1(0.5, 0.5);
+        //     Vector2D velocity2(-0.2, 1.1);
+        //     velocity1 = velocity1 * sqrt(G); 
+        //     velocity2 = velocity2 * sqrt(G);
+        //     return std::vector<Object> {
+        //         {-position1, -2 * velocity1, 1}, 
+        //         {position1, velocity2, 1}, 
+        //         {{0,0}, -2 * velocity2, 1},
+        //         {position2, velocity1, 1},
+        //     };
+    }
 
     return std::vector<Object>{};
     // return std::vector<Object> {object1, object2, object3};
@@ -90,7 +102,8 @@ int main()
     const int draw_buffer = 10;
     const int print_buffer = draw_buffer * 200;
     
-    Simulation simulation(create_objects(2));
+    const int n = 2;
+    Simulation simulation(create_objects(n));
 
     sf::Clock clock;
 
@@ -108,6 +121,7 @@ int main()
 
             if (event->is<sf::Event::KeyPressed>()) {
                 const sf::Keyboard::Key code = event->getIf<sf::Event::KeyPressed>()->code;
+                std::vector<Object> objs;
 
                 switch (code)
                 {
@@ -122,6 +136,16 @@ int main()
                 case sf::Keyboard::Key::C: // Clear window
                     simulation.clear();
                     window.clear();
+                    break;
+
+                case sf::Keyboard::Key::R: // Reset configuration
+                    simulation.clear();
+                    window.clear();
+                    objs = simulation.add_objects(create_objects(n));
+                    for (auto& obj : objs) {
+                        renderer.draw_object(obj);
+                    }
+                    initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
                     break;
 
                 case sf::Keyboard::Key::B: // Adds a new object in a random location

@@ -11,6 +11,7 @@ public:
 
     Object add_random_object();
     std::vector<Object> add_random_objects(int n);
+    std::vector<Object> add_objects(const std::vector<Object>& objects);
 
     void step(double dt);
     void update_paths();
