@@ -28,7 +28,8 @@ std::vector<Object> Simulation::add_random_objects(int n) {
         Vector2D v((2 * uniform_distrib(gen) - 1), (2 * uniform_distrib(gen) - 1));
         v = 2 * v;
         // Object object(x, v, {0,0}, uniform_distrib(gen) * m);
-        Object object(x, v, m);
+        int id = round(COLORS.size() * uniform_distrib(gen));
+        Object object(x, v, m, id);
         objects.push_back(object);
         new_objects.push_back(object);
     }

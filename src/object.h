@@ -15,8 +15,9 @@ class Object {
         Vector2D acceleration;
         double mass;
         std::deque<sf::Vector2f> path;
+        int id;
 
-        Object(Vector2D position, Vector2D velocity, double mass);
+        Object(Vector2D position, Vector2D velocity, double mass, int id = 0);
 
         friend std::ostream& operator<<(std::ostream& os, const Object& o);
         friend bool operator==(const Object& o1, const Object& o2);

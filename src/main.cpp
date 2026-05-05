@@ -19,8 +19,8 @@ std::vector<Object> create_objects(int n = 1) {
     {
         case 1:
             return std::vector<Object> {
-                {{0, 0}, {0, 0}, 1}, // sun
-                {{1, 0}, {0, 6.28}, 3 * pow(10, -6)}, // earth
+                {{0, 0}, {0, 0}, 1, 3}, // sun
+                {{1, 0}, {0, 6.28}, 3 * pow(10, -6), 2}, // earth
             };
 
         case 2: // Figure 8
@@ -28,9 +28,9 @@ std::vector<Object> create_objects(int n = 1) {
             Vector2D velocity(0.4662036850, 0.4323657300);
             velocity = velocity * sqrt(G); // Figure 8 configuration uses G=1. We need to normalize for our G
             return std::vector<Object> {
-                {position, velocity, 1}, 
-                {-position, velocity, 1}, 
-                {{0,0}, -2 * velocity, 1},
+                {position, velocity, 1, 0}, 
+                {-position, velocity, 1, 1}, 
+                {{0,0}, -2 * velocity, 1, 2},
             };
 
         // case 3: // 4 bodies
@@ -90,11 +90,6 @@ int main()
     Renderer renderer(window);
 
     bool paused = false;
-
-    // 100 pixels = 1 au
-    // (400, 400) -> (0,0)
-    // (500, 400) -> (1,0)
-    // Earth: x = (1, 0), v = (6.28, 0)
     
     const double dt = 0.00002f;
     double time = 0.0f;
@@ -142,9 +137,7 @@ int main()
                     simulation.clear();
                     window.clear();
                     objs = simulation.add_objects(create_objects(n));
-                    for (auto& obj : objs) {
-                        renderer.draw_object(obj);
-                    }
+                    renderer.draw_objects(objs);
                     initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
                     break;
 
@@ -163,16 +156,15 @@ int main()
             continue;
         }
 
-        if (steps % draw_buffer == 0) { window.clear(); }
+        if (steps % draw_buffer == 0) { 
+            window.clear();
+            simulation.update_paths();
+            renderer.draw_objects(simulation.objects);
+            renderer.draw_paths(simulation.objects); 
+        }
         
         for (int i = 0; i < simulation.objects.size(); i++) {
             Object& obj = simulation.objects[i];
-
-            if (steps % draw_buffer== 0) {
-                simulation.update_paths();
-                renderer.draw_object(obj);
-                renderer.draw_path(obj.path);
-            }
 
             if (steps % print_buffer == 0) {
 

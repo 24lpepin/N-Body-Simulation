@@ -9,7 +9,8 @@ public:
 
     void draw_object(const Object& object);
     void draw_objects(const std::vector<Object>& objects);
-    void draw_path(const std::deque<sf::Vector2f>& path);
+    void draw_path(const Object& object);
+    void draw_paths(const std::vector<Object>& objects);
     void clear();
     void display();
     void close();
@@ -17,5 +18,7 @@ public:
 private:
     sf::RenderWindow& window;
 
-    sf::Vector2f world_to_screen(const Vector2D& v); // Converts given position in au to pixels
+    Vector2D world_to_screen(const sf::Vector2f& v); // Converts given position in au to pixels
+
+    sf::Color get_color(const Object& object);
 };
