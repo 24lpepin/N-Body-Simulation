@@ -12,11 +12,12 @@
 #include <./SFML/Graphics.hpp>
 
 void draw_object(sf::RenderWindow& window, const Object& object) {
-    const double radius = 10.f * (object.mass / 2000 * std::pow(10, -15)) + 2.5; // Radius depends on mass of object
-    // const double radius = 10.f;
+    // const double radius = 10.f * (object.mass / 2000 * std::pow(10, -15)) + 2.5; // Radius depends on mass of object
+    const double radius = 10.f;
     sf::CircleShape shape(radius);
     // std::cout << object.position << object.velocity << object.acceleration << std::endl;
-    shape.setPosition(object.position - Vector2D(radius, radius)); // Subtract radius to center object
+    const Vector2D position = 100 * (object.position) - Vector2D(radius, radius) + Vector2D(400, 400);
+    shape.setPosition(position); // Subtract radius to center object
     shape.setFillColor(sf::Color::White);
     window.draw(shape);
 }
@@ -33,16 +34,29 @@ void draw_path(sf::RenderWindow& window, const std::deque<sf::Vector2f>& path) {
 std::vector<Object> create_objects(int n = 1) {
     double m = std::pow(10, 16);
 
-    // Object object1({400, 300}, {70, 0}, {0, 0}, m / 10000);
-    // Object object2({400, 550}, {-60, 0}, {0, 0}, m / 100);
-    // Object object3({400, 300}, {-80, 0}, {0, 0}, m / 10000);
-    Object object3({400, 300}, {-80, 0}, {0, 0}, m);
-    Object object1({400, 400}, {0, 0}, {0, 0}, m);
-    // Object object2({400, 450}, {110, 0}, {0, 0}, m / 10000);
-    Object object2({400, 450}, {110, 0}, {0, 0}, m);
+    switch (n) 
+    {
+        case 1:
+            return std::vector<Object> {
+                {{0, 0}, {0, 0}, 1}, // sun
+                {{1, 0}, {0, 6.28}, 3 * pow(10, -6)}, // earth
+            };
 
-    // return std::vector<Object> {object1, object2};
-    return std::vector<Object> {object1, object2, object3};
+        case 2:
+            Vector2D position(0.97000436, -0.24308753);
+            Vector2D velocity(0.4662036850, 0.4323657300);
+            velocity = velocity * 2 * M_PI;
+            return std::vector<Object> {
+                {position, velocity, 1}, 
+                {-position, velocity, 1}, 
+                {{0,0}, -2 * velocity, 1},
+            };
+    }
+
+    
+
+    return std::vector<Object>{};
+    // return std::vector<Object> {object1, object2, object3};
 }
 
 double pairwise_potential(const Object& a, const Object& b) {
@@ -81,14 +95,19 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     bool paused = false;
+
+    // 100 pixels = 1 au
+    // (400, 400) -> (0,0)
+    // (500, 400) -> (1,0)
+    // Earth: x = (1, 0), v = (6.28, 0)
     
-    const double dt = 0.0002f;
+    const double dt = 0.00002f;
     double time = 0.0f;
     int steps = 0;
     const int draw_buffer = 10;
     const int print_buffer = draw_buffer * 200;
     
-    Simulation simulation(create_objects());
+    Simulation simulation(create_objects(2));
 
     sf::Clock clock;
 

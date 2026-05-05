@@ -13,19 +13,22 @@ Object Simulation::add_random_object() {
 }
 
 std::vector<Object> Simulation::add_random_objects(int n) {
-    double m = std::pow(10, 15);
+    // double m = std::pow(10, 15);
+    double m = 1;
     std::vector<Object> new_objects{};
 
     std::random_device rd; 
     std::mt19937 gen(rd()); 
     std::uniform_real_distribution<> uniform_distrib(0, 1);
-    std::normal_distribution<> normal_distrib(400, 125);
+    // std::normal_distribution<> normal_distrib(400, 125);
+    std::normal_distribution<> normal_distrib(0, 1);
 
     for (int i = 0; i < n; i++) {
         Vector2D x(normal_distrib(gen), normal_distrib(gen));
         Vector2D v((2 * uniform_distrib(gen) - 1), (2 * uniform_distrib(gen) - 1));
-        v = 100 * v;
-        Object object(x, v, {0,0}, 2000 * uniform_distrib(gen) * m);
+        v = 2 * v;
+        // Object object(x, v, {0,0}, uniform_distrib(gen) * m);
+        Object object(x, v, m);
         objects.push_back(object);
         new_objects.push_back(object);
     }

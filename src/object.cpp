@@ -5,11 +5,8 @@
 #include "object.h"
 #include "const.h"
 
-Object::Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass): 
-    position(position), velocity(velocity), acceleration(acceleration), mass(mass) 
-{ 
-    path = std::deque<sf::Vector2f>();
-}
+Object::Object(Vector2D position, Vector2D velocity, double mass): 
+    position(position), velocity(velocity), acceleration(0,0), mass(mass), path() { }
 
 std::ostream& operator<<(std::ostream& os, const Object& o) {
     return os << "position: " << o.position << std::endl 
