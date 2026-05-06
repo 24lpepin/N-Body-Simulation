@@ -14,7 +14,7 @@ Object Simulation::add_random_object() {
 
 std::vector<Object> Simulation::add_random_objects(int n) {
     // double m = std::pow(10, 15);
-    double m = 1;
+    // double m = 1;
     std::vector<Object> new_objects{};
 
     std::random_device rd; 
@@ -26,7 +26,8 @@ std::vector<Object> Simulation::add_random_objects(int n) {
     for (int i = 0; i < n; i++) {
         Vector2D x(normal_distrib(gen), normal_distrib(gen));
         Vector2D v((2 * uniform_distrib(gen) - 1), (2 * uniform_distrib(gen) - 1));
-        v = 2 * v;
+        double m = uniform_distrib(gen);
+        v = sqrt(G) * v;
         // Object object(x, v, {0,0}, uniform_distrib(gen) * m);
         int id = round(COLORS.size() * uniform_distrib(gen));
         Object object(x, v, m, id);
@@ -63,6 +64,13 @@ void Simulation::step(double dt) {
     // Finalize velocity
     for (auto& obj : objects) {
         obj.velocity = obj.velocity + 0.5 * obj.acceleration * dt;
+    }
+
+    for (int i = objects.size() - 1; i >= 0; i--) {
+        if (objects[i].position.magnitude() >= 50) {
+            std::cout << "Object " << i << " has been removed" << std::endl;
+            objects.erase(objects.begin() + i);
+        }
     }
 }
 

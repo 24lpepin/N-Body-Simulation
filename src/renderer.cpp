@@ -41,6 +41,16 @@ void Renderer::draw_paths(const std::vector<Object>& objects) {
     }
 }
 
+void Renderer::draw(const std::vector<Object>& objects) {
+    draw_objects(objects);
+    draw_paths(objects);
+}
+
+void Renderer::draw(const Object& object) {
+    draw_object(object);
+    draw_path(object);
+}
+
 void Renderer::clear() {
     window.clear();
 

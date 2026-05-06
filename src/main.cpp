@@ -20,7 +20,7 @@ std::vector<Object> create_objects(int n = 1) {
         case 1:
             return std::vector<Object> {
                 {{0, 0}, {0, 0}, 1, 3}, // sun
-                {{1, 0}, {0, 6.28}, 3 * pow(10, -6), 2}, // earth
+                {{1, 0}, {0, 6.28}, 3 * pow(10, -6), 1}, // earth
             };
 
         case 2: // Figure 8
@@ -130,37 +130,36 @@ int main()
                 
                 case sf::Keyboard::Key::C: // Clear window
                     simulation.clear();
-                    window.clear();
+                    renderer.clear();
                     break;
 
                 case sf::Keyboard::Key::R: // Reset configuration
                     simulation.clear();
-                    window.clear();
+                    renderer.clear();
                     objs = simulation.add_objects(create_objects(n));
-                    renderer.draw_objects(objs);
+                    renderer.draw(objs);
                     initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
                     break;
 
                 case sf::Keyboard::Key::B: // Adds a new object in a random location
                     Object object = simulation.add_random_object();
                     initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
-                    renderer.draw_object(object);
+                    renderer.draw(object);
                     break;
                 }
             }
         }
 
-        window.display(); // redraw window here incase window is paused.
+        renderer.display(); // redraw window here incase window is paused.
 
         if (paused) {
             continue;
         }
 
         if (steps % draw_buffer == 0) { 
-            window.clear();
+            renderer.clear();
             simulation.update_paths();
-            renderer.draw_objects(simulation.objects);
-            renderer.draw_paths(simulation.objects); 
+            renderer.draw(simulation.objects);
         }
         
         for (int i = 0; i < simulation.objects.size(); i++) {
