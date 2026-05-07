@@ -69,5 +69,8 @@ Vector2D Renderer::world_to_screen(const sf::Vector2f& v) {
 }
 
 sf::Color Renderer::get_color(const Object& object) {
-    return COLORS[object.id % COLORS.size()];
+    if (auto iter = COLOR_MAP.find(object.color); iter != COLOR_MAP.end()) {
+        return iter->second;
+    }
+    return COLOR_MAP.at("white"); // default
 }

@@ -1,5 +1,5 @@
 #include <cmath>
-#include <array>
+#include <unordered_map>
 #include <./SFML/Graphics.hpp>
 
 // inline constexpr double G = 0.0000000000667; //std::pow(6.67,-11); m^3 kg^{-1} s^{-2}
@@ -10,7 +10,12 @@ inline constexpr int MAX_PATH_LEN = 20000;
 
 inline constexpr int DISTANCE_TO_PIXEL_CONVERSION = 100; // 100 pixels / 1 au
 
-inline constexpr std::array<sf::Color, 7> COLORS = {
-    sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color::Yellow, sf::Color::Magenta,
-    sf::Color::Cyan, sf::Color::White,
+inline std::unordered_map<std::string, sf::Color> COLOR_MAP = {
+    {"red", sf::Color::Red}, 
+    {"green", sf::Color::Green}, 
+    {"blue", sf::Color::Blue}, 
+    {"yellow", sf::Color::Yellow}, 
+    {"magenta", sf::Color::Magenta},
+    {"cyan", sf::Color::Cyan}, 
+    {"white", sf::Color::White},
 };

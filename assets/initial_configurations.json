@@ -1,0 +1,48 @@
+[
+    {
+        "id": 1,
+        "name": "Sun and Earth",
+        "description": "abc",
+        "G": 39.478,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [0, 0],
+                "velocity": [0, 0],
+                "color": "yellow"
+            },
+            {
+                "mass": 0.000003,
+                "position": [1, 0],
+                "velocity": [0, 6.28],
+                "color": "yellow"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Figure 8",
+        "description": "abc",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [0.97000436, -0.24308753],
+                "velocity": [0.4662036850, 0.4323657300],
+                "color": "red"
+            },
+            {
+                "mass": 1,
+                "position": [-0.97000436, 0.24308753],
+                "velocity": [0.4662036850, 0.4323657300],
+                "color": "blue"
+            },
+            {
+                "mass": 1,
+                "position": [0, 0],
+                "velocity": [-0.93240737, -0.86473146],
+                "color": "green"
+            }
+        ]
+    }
+]

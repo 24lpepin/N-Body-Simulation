@@ -16,8 +16,9 @@ class Object {
         double mass;
         std::deque<sf::Vector2f> path;
         int id;
+        std::string color;
 
-        Object(Vector2D position, Vector2D velocity, double mass, int id = 0);
+        Object(Vector2D position, Vector2D velocity, double mass, int id = 0, std::string color = "white");
 
         friend std::ostream& operator<<(std::ostream& os, const Object& o);
         friend bool operator==(const Object& o1, const Object& o2);

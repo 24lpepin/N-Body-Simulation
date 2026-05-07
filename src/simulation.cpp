@@ -29,7 +29,7 @@ std::vector<Object> Simulation::add_random_objects(int n) {
         double m = uniform_distrib(gen);
         v = sqrt(G) * v;
         // Object object(x, v, {0,0}, uniform_distrib(gen) * m);
-        int id = round(COLORS.size() * uniform_distrib(gen));
+        int id = round(100 * uniform_distrib(gen));
         Object object(x, v, m, id);
         objects.push_back(object);
         new_objects.push_back(object);

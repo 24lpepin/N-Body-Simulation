@@ -5,8 +5,8 @@
 #include "object.h"
 #include "const.h"
 
-Object::Object(Vector2D position, Vector2D velocity, double mass, int id): 
-    position(position), velocity(velocity), acceleration(0,0), mass(mass), id(id), path() { }
+Object::Object(Vector2D position, Vector2D velocity, double mass, int id, std::string color): 
+    position(position), velocity(velocity), acceleration(0,0), mass(mass), id(id), color(color), path() { }
 
 std::ostream& operator<<(std::ostream& os, const Object& o) {
     return os << "position: " << o.position << std::endl 

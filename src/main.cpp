@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <cmath>
 #include <vector>
 #include <queue>
@@ -11,45 +12,35 @@
 #include "renderer.h"
 
 #include <./SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 
-std::vector<Object> create_objects(int n = 1) {
-    double m = std::pow(10, 16);
+// for convenience
+using json = nlohmann::json;
 
-    switch (n) 
-    {
-        case 1:
-            return std::vector<Object> {
-                {{0, 0}, {0, 0}, 1, 3}, // sun
-                {{1, 0}, {0, 6.28}, 3 * pow(10, -6), 1}, // earth
-            };
+std::vector<Object> create_objects(int n = 1) { // TODO move this to simulation? also add param for name
+    std::ifstream f("../assets/initial_configurations.json");
+    json configurations = json::parse(f);
 
-        case 2: // Figure 8
-            Vector2D position(0.97000436, -0.24308753);
-            Vector2D velocity(0.4662036850, 0.4323657300);
-            velocity = velocity * sqrt(G); // Figure 8 configuration uses G=1. We need to normalize for our G
-            return std::vector<Object> {
-                {position, velocity, 1, 0}, 
-                {-position, velocity, 1, 1}, 
-                {{0,0}, -2 * velocity, 1, 2},
-            };
+    std::vector<Object> objects;
 
-        // case 3: // 4 bodies
-        //     Vector2D position1(1.7, -1);
-        //     Vector2D position2(-1.2, 0.5);
-        //     Vector2D velocity1(0.5, 0.5);
-        //     Vector2D velocity2(-0.2, 1.1);
-        //     velocity1 = velocity1 * sqrt(G); 
-        //     velocity2 = velocity2 * sqrt(G);
-        //     return std::vector<Object> {
-        //         {-position1, -2 * velocity1, 1}, 
-        //         {position1, velocity2, 1}, 
-        //         {{0,0}, -2 * velocity2, 1},
-        //         {position2, velocity1, 1},
-        //     };
+    for (auto& config : configurations) {
+        if (config["id"] == n) { // TODO protect against duplicate ids
+            for (auto& body : config["bodies"]) {
+                Vector2D position(body["position"][0], body["position"][1]);
+                Vector2D velocity(body["velocity"][0], body["velocity"][1]);
+
+                if (config["G"] == 1) {
+                    velocity = velocity * sqrt(G); // Simulation uses G=39.478. Need to normalize
+                }
+
+                objects.push_back(Object(position, velocity, body["mass"], 0, body["color"]));
+                // objects.push_back(Object(position, velocity, body["mass"], 1));
+            }
+            
+        }
     }
 
-    return std::vector<Object>{};
-    // return std::vector<Object> {object1, object2, object3};
+    return objects;
 }
 
 double pairwise_potential(const Object& a, const Object& b) {
