@@ -82,7 +82,7 @@ int main()
 
     bool paused = false;
     
-    const double dt = 0.00002f;
+    double dt = 0.00002f;
     double time = 0.0f;
     int steps = 0;
     const int draw_buffer = 10;
@@ -133,9 +133,19 @@ int main()
                     break;
 
                 case sf::Keyboard::Key::B: // Adds a new object in a random location
+                {
                     Object object = simulation.add_random_object();
                     initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
                     renderer.draw(object);
+                    break;
+                }
+
+                case sf::Keyboard::Key::Equal:
+                    dt *= 1.5;
+                    break;
+
+                case sf::Keyboard::Key::Hyphen:
+                    dt /= 1.5;
                     break;
                 }
             }
