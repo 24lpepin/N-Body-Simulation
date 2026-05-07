@@ -44,5 +44,277 @@
                 "color": "green"
             }
         ]
+    },
+    {
+        "id": 3,
+        "name": "Lagrange Triangle",
+        "description": "",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [3, 0],
+                "velocity": [0, 0.5],
+                "color": "red"
+            },
+            {
+                "mass": 1,
+                "position": [-1.5, 2.598076211353316],
+                "velocity": [-0.43301270189221935, -0.25],
+                "color": "blue"
+            },
+            {
+                "mass": 1,
+                "position": [-1.5, -2.598076211353316],
+                "velocity": [0.43301270189221935, -0.25],
+                "color": "green"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Square Central Configuration",
+        "description": "Four equal masses at the corners of a rotating square.",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [2, 2],
+                "velocity": [-0.35, 0.35],
+                "color": "red"
+            },
+            {
+                "mass": 1,
+                "position": [-2, 2],
+                "velocity": [-0.35, -0.35],
+                "color": "blue"
+            },
+            {
+                "mass": 1,
+                "position": [-2, -2],
+                "velocity": [0.35, -0.35],
+                "color": "green"
+            },
+            {
+                "mass": 1,
+                "position": [2, -2],
+                "velocity": [0.35, 0.35],
+                "color": "yellow"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Pentagon Ring",
+        "description": "Five equal masses in a regular pentagon rotating about the center. UNSTABLE",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [4, 0],
+                "velocity": [0, 0.42],
+                "color": "red"
+            },
+            {
+                "mass": 1,
+                "position": [1.236, 3.804],
+                "velocity": [-0.399, 0.13],
+                "color": "blue"
+            },
+            {
+                "mass": 1,
+                "position": [-3.236, 2.351],
+                "velocity": [-0.247, -0.34],
+                "color": "green"
+            },
+            {
+                "mass": 1,
+                "position": [-3.236, -2.351],
+                "velocity": [0.247, -0.34],
+                "color": "yellow"
+            },
+            {
+                "mass": 1,
+                "position": [1.236, -3.804],
+                "velocity": [0.399, 0.13],
+                "color": "purple"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Hexagon Ring",
+        "description": "Six equal masses in a rotating hexagonal central configuration.",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [5, 0],
+                "velocity": [0, 0.38],
+                "color": "red"
+            },
+            {
+                "mass": 1,
+                "position": [2.5, 4.3301],
+                "velocity": [-0.329, 0.19],
+                "color": "blue"
+            },
+            {
+                "mass": 1,
+                "position": [-2.5, 4.3301],
+                "velocity": [-0.329, -0.19],
+                "color": "green"
+            },
+            {
+                "mass": 1,
+                "position": [-5, 0],
+                "velocity": [0, -0.38],
+                "color": "yellow"
+            },
+            {
+                "mass": 1,
+                "position": [-2.5, -4.3301],
+                "velocity": [0.329, -0.19],
+                "color": "purple"
+            },
+            {
+                "mass": 1,
+                "position": [2.5, -4.3301],
+                "velocity": [0.329, 0.19],
+                "color": "cyan"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Maxwell Ring",
+        "description": "A heavy central mass surrounded by orbiting equal masses.",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 20,
+                "position": [0, 0],
+                "velocity": [0, 0],
+                "color": "white"
+            },
+            {
+                "mass": 1,
+                "position": [6, 0],
+                "velocity": [0, 1.82],
+                "color": "red"
+            },
+            {
+                "mass": 1,
+                "position": [0, 6],
+                "velocity": [-1.82, 0],
+                "color": "blue"
+            },
+            {
+                "mass": 1,
+                "position": [-6, 0],
+                "velocity": [0, -1.82],
+                "color": "green"
+            },
+            {
+                "mass": 1,
+                "position": [0, -6],
+                "velocity": [1.82, 0],
+                "color": "yellow"
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Double Square Rosette",
+        "description": "Two counter-rotating square rings.",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [2, 2],
+                "velocity": [-0.5, 0.5],
+                "color": "red"
+            },
+            {
+                "mass": 1,
+                "position": [-2, 2],
+                "velocity": [-0.5, -0.5],
+                "color": "blue"
+            },
+            {
+                "mass": 1,
+                "position": [-2, -2],
+                "velocity": [0.5, -0.5],
+                "color": "green"
+            },
+            {
+                "mass": 1,
+                "position": [2, -2],
+                "velocity": [0.5, 0.5],
+                "color": "yellow"
+            },
+            {
+                "mass": 0.5,
+                "position": [4, 0],
+                "velocity": [0, -0.35],
+                "color": "magenta"
+            },
+            {
+                "mass": 0.5,
+                "position": [0, 4],
+                "velocity": [0.35, 0],
+                "color": "cyan"
+            },
+            {
+                "mass": 0.5,
+                "position": [-4, 0],
+                "velocity": [0, 0.35],
+                "color": "white"
+            },
+            {
+                "mass": 0.5,
+                "position": [0, -4],
+                "velocity": [-0.35, 0],
+                "color": "red"
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "name": "Euler-Moulton Line",
+        "description": "Five collinear masses rotating as a rigid structure.",
+        "G": 1,
+        "bodies": [
+            {
+                "mass": 1,
+                "position": [-6, 0],
+                "velocity": [0, -0.7],
+                "color": "red"
+            },
+            {
+                "mass": 2,
+                "position": [-3, 0],
+                "velocity": [0, -0.35],
+                "color": "blue"
+            },
+            {
+                "mass": 3,
+                "position": [0, 0],
+                "velocity": [0, 0],
+                "color": "white"
+            },
+            {
+                "mass": 2,
+                "position": [3, 0],
+                "velocity": [0, 0.35],
+                "color": "green"
+            },
+            {
+                "mass": 1,
+                "position": [6, 0],
+                "velocity": [0, 0.7],
+                "color": "yellow"
+            }
+        ]
     }
 ]
