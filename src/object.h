@@ -31,6 +31,7 @@ class Object {
         Vector2D compute_force(const std::vector<Object>& objects);
 
         double get_kinetic_energy() const;
+        double get_angular_momentum() const;
 
     private:
         /**

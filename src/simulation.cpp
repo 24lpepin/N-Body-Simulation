@@ -83,3 +83,41 @@ void Simulation::update_paths() {
 void Simulation::clear() {
     objects.clear();
 }
+
+double Simulation::pairwise_potential(const Object& a, const Object& b) {
+    double r = (a.position - b.position).magnitude();
+    return -G * a.mass * b.mass / r;
+}
+
+double Simulation::compute_total_potential_energy() {
+    double total = 0.0;
+
+    for (size_t i = 0; i < objects.size(); ++i) {
+        for (size_t j = i + 1; j < objects.size(); ++j) {
+            total += pairwise_potential(objects[i], objects[j]);
+        }
+    }
+
+    return total;
+}
+
+double Simulation::compute_total_energy() {
+    double kinetic = 0.0;
+
+    for (const Object& obj : objects) {
+        kinetic += obj.get_kinetic_energy();
+    }
+
+    double potential = compute_total_potential_energy();
+
+    return kinetic + potential;
+}
+
+double Simulation::compute_total_angular_momentum() {
+    double total = 0.0;
+
+    for (const Object& obj : objects) {
+        total = total + obj.get_angular_momentum();
+    }
+    return total;
+}

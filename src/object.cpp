@@ -43,6 +43,10 @@ double Object::get_kinetic_energy() const {
     return 0.5 * mass * (velocity.x * velocity.x + velocity.y * velocity.y);
 }
 
+double Object::get_angular_momentum() const {
+    return mass * (position.x * velocity.y - position.y * velocity.x);
+}
+
 /**
  * Updates the acceleration by computing the force due to each object in the simulation.
  */

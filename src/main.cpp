@@ -43,35 +43,6 @@ std::vector<Object> create_objects(int n = 1) { // TODO move this to simulation?
     return objects;
 }
 
-double pairwise_potential(const Object& a, const Object& b) {
-    double r = (a.position - b.position).magnitude();
-    return -G * a.mass * b.mass / r;
-}
-
-double compute_total_potential_energy(const std::vector<Object>& objects) {
-    double total = 0.0;
-
-    for (size_t i = 0; i < objects.size(); ++i) {
-        for (size_t j = i + 1; j < objects.size(); ++j) {
-            total += pairwise_potential(objects[i], objects[j]);
-        }
-    }
-
-    return total;
-}
-
-double compute_total_energy(const std::vector<Object>& objects) {
-    double kinetic = 0.0;
-
-    for (const Object& obj : objects) {
-        kinetic += obj.get_kinetic_energy();
-    }
-
-    double potential = compute_total_potential_energy(objects);
-
-    return kinetic + potential;
-}
-
 int main()
 {
     sf::RenderWindow window(sf::VideoMode({800, 800}), "Orbital Simulation");
@@ -88,12 +59,13 @@ int main()
     const int draw_buffer = 10;
     const int print_buffer = draw_buffer * 200;
     
-    const int n = 2;
+    const int n = 3;
     Simulation simulation(create_objects(n));
 
     sf::Clock clock;
 
-    double initial_energy = compute_total_energy(simulation.objects);
+    double initial_energy = simulation.compute_total_energy();
+    double initial_angular_momentum = simulation.compute_total_angular_momentum();
 
     while (window.isOpen())
     {
@@ -107,7 +79,6 @@ int main()
 
             if (event->is<sf::Event::KeyPressed>()) {
                 const sf::Keyboard::Key code = event->getIf<sf::Event::KeyPressed>()->code;
-                std::vector<Object> objs;
 
                 switch (code)
                 {
@@ -125,17 +96,21 @@ int main()
                     break;
 
                 case sf::Keyboard::Key::R: // Reset configuration
+                {
                     simulation.clear();
                     renderer.clear();
-                    objs = simulation.add_objects(create_objects(n));
+                    std::vector<Object> objs = simulation.add_objects(create_objects(n));
                     renderer.draw(objs);
-                    initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
+                    initial_energy = simulation.compute_total_energy(); // recompute initial energy
+                    initial_angular_momentum = simulation.compute_total_angular_momentum();
                     break;
+                }
 
                 case sf::Keyboard::Key::B: // Adds a new object in a random location
                 {
                     Object object = simulation.add_random_object();
-                    initial_energy = compute_total_energy(simulation.objects); // recompute initial energy
+                    initial_energy = simulation.compute_total_energy(); // recompute initial energy
+                    initial_angular_momentum = simulation.compute_total_angular_momentum();
                     renderer.draw(object);
                     break;
                 }
@@ -168,22 +143,27 @@ int main()
 
             if (steps % print_buffer == 0) {
 
-                double drift = 100 * (initial_energy - compute_total_energy(simulation.objects)) / initial_energy;
-
                 std::cout << std::fixed << std::setprecision(2);
 
                 std::cout << "time " << std::setw(5) << time << "  "
                           << "obj " << std::setw(2) << i << "  "
                           << "pos: (" << std::setw(7) << obj.position.x << ", " << std::setw(7) << obj.position.y << ")  "
-                          << "vel: (" << std::setw(7) << obj.velocity.x << ", " << std::setw(7) << obj.velocity.y << ")  "
-                          << "energy drift: " << std::setw(5) << drift << "%" << std::endl;
+                          << "vel: (" << std::setw(7) << obj.velocity.x << ", " << std::setw(7) << obj.velocity.y << ")  " << std::endl;
             }
 
             simulation.step(dt);
             
         }
 
-        if (steps % print_buffer == 0) { std::cout << "fps: " << fps << std::endl; }
+        if (steps % print_buffer == 0) { 
+
+            double energy_drift = 100 * (initial_energy - simulation.compute_total_energy()) / initial_energy;
+            double angular_momentum_drift = 100 * (initial_angular_momentum - simulation.compute_total_angular_momentum()) / initial_angular_momentum;
+
+            std::cout << "fps: " << fps / draw_buffer << "  "
+                      << "energy drift: " << std::scientific << std::setw(5) << energy_drift << "% " 
+                      << "angular momentum drift: " << std::scientific << std::setw(5) << angular_momentum_drift << "% " << std::endl; 
+        }
 
         steps += 1;
         time += dt;

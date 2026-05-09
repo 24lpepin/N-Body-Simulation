@@ -17,4 +17,11 @@ public:
     void update_paths();
 
     void clear();
+
+    double compute_total_energy();
+    double compute_total_angular_momentum();
+
+private:
+    double pairwise_potential(const Object& a, const Object& b);
+    double compute_total_potential_energy();
 };
