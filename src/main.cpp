@@ -18,7 +18,7 @@
 using json = nlohmann::json;
 
 std::vector<Object> create_objects(int n = 1) { // TODO move this to simulation? also add param for name
-    std::ifstream f("../assets/initial_configurations.json");
+    std::ifstream f("./assets/initial_configurations.json");
     json configurations = json::parse(f);
 
     std::vector<Object> objects;
@@ -53,8 +53,8 @@ int main()
 
     bool paused = false;
     
-    double dt = 0.00002f;
-    double time = 0.0f;
+    double dt = 0.00002;
+    double time = 0.0;
     int steps = 0;
     const int draw_buffer = 10;
     const int print_buffer = draw_buffer * 200;
@@ -138,6 +138,7 @@ int main()
             renderer.draw(simulation.objects);
         }
         
+        simulation.step(dt);
         for (int i = 0; i < simulation.objects.size(); i++) {
             Object& obj = simulation.objects[i];
 
@@ -150,9 +151,6 @@ int main()
                           << "pos: (" << std::setw(7) << obj.position.x << ", " << std::setw(7) << obj.position.y << ")  "
                           << "vel: (" << std::setw(7) << obj.velocity.x << ", " << std::setw(7) << obj.velocity.y << ")  " << std::endl;
             }
-
-            simulation.step(dt);
-            
         }
 
         if (steps % print_buffer == 0) { 
