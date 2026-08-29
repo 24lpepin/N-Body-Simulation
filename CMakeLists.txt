@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(orbital_simulation)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -26,6 +29,7 @@ add_executable(
     src/object.cpp
     src/simulation.cpp
     src/renderer.cpp
+    src/forces/direct_force_calculator.cpp
 )
 
 target_link_libraries(

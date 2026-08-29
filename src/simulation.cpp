@@ -6,7 +6,10 @@
 #include "const.h"
 #include "simulation.h"
 
-Simulation::Simulation(std::vector<Object> objects): objects(objects) {}
+Simulation::Simulation(
+    std::unique_ptr<ForceCalculator> force_calculator,
+    std::vector<Object> objects
+): force_calculator(std::move(force_calculator)), objects(std::move(objects)) {}
 
 Object Simulation::add_random_object() {
     return add_random_objects(1)[0];
@@ -46,9 +49,7 @@ std::vector<Object> Simulation::add_objects(const std::vector<Object>& objs) {
 
 void Simulation::step(double dt) {
     // Compute forces at t
-    for (auto& obj : objects) {
-        obj.acceleration = obj.compute_force(objects) / obj.mass;
-    }
+    force_calculator->update_accelerations(objects);
 
     // Half-step velocity + position
     for (auto& obj : objects) {
@@ -57,14 +58,14 @@ void Simulation::step(double dt) {
     }
 
     // Recompute forces at t + dt
-    for (auto& obj : objects) {
-        obj.acceleration = obj.compute_force(objects) / obj.mass;
-    }
+    force_calculator->update_accelerations(objects);
 
     // Finalize velocity
     for (auto& obj : objects) {
         obj.velocity = obj.velocity + 0.5 * obj.acceleration * dt;
     }
+
+    
 
     for (int i = objects.size() - 1; i >= 0; i--) {
         if (objects[i].position.magnitude() >= 50) {

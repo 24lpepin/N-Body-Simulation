@@ -10,6 +10,7 @@
 #include "const.h"
 #include "simulation.h"
 #include "renderer.h"
+#include "forces/direct_force_calculator.h"
 
 #include <./SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
@@ -60,7 +61,7 @@ int main()
     const int print_buffer = draw_buffer * 200;
     
     const int n = 3;
-    Simulation simulation(create_objects(n));
+    Simulation simulation(std::make_unique<DirectForceCalculator>(), create_objects(n));
 
     sf::Clock clock;
 

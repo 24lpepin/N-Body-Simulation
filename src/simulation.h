@@ -2,12 +2,17 @@
 #include <vector>
 #include "geometry.h"
 #include "object.h"
+#include "forces/force_calculator.h"
 
 class Simulation {
 public:
+    std::unique_ptr<ForceCalculator> force_calculator;
     std::vector<Object> objects;
 
-    Simulation(std::vector<Object> objects = std::vector<Object>{});
+    Simulation(
+        std::unique_ptr<ForceCalculator> force_calculator, 
+        std::vector<Object> objects = std::vector<Object>{}
+    );
 
     Object add_random_object();
     std::vector<Object> add_random_objects(int n);
