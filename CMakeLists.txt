@@ -30,6 +30,7 @@ add_executable(
     src/simulation.cpp
     src/renderer.cpp
     src/forces/direct_force_calculator.cpp
+    src/forces/barnes_hut_calculator.cpp
 )
 
 target_link_libraries(
