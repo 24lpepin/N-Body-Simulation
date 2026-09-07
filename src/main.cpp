@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <cmath>
 #include <vector>
 #include <queue>
@@ -6,66 +8,41 @@
 #include "geometry.h"
 #include "object.h"
 #include "const.h"
+#include "simulation.h"
+#include "renderer.h"
+#include "forces/direct_force_calculator.h"
+#include "forces/barnes_hut_calculator.h"
 
 #include <./SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 
-void draw_object(sf::RenderWindow& window, const Object& object) {
-    const float radius = 10.f;
-    sf::CircleShape shape(radius);
-    // std::cout << object.position << object.velocity << object.acceleration << std::endl;
-    shape.setPosition(object.position - Vector2D(radius, radius)); // Subtract radius to center object
-    shape.setFillColor(sf::Color::White);
-    window.draw(shape);
-}
+// for convenience
+using json = nlohmann::json;
 
-void draw_path(sf::RenderWindow& window, const std::deque<sf::Vector2f>& path) {
-    sf::VertexArray lines(sf::PrimitiveType::LineStrip, path.size());
-    for (size_t i = 0; i < path.size(); ++i) {
-        lines[i].position = path[i];
-        lines[i].color = sf::Color(255, 255, 255, i * 255 / path.size());
-    }
-    window.draw(lines);
-}
+std::vector<Object> create_objects(int n = 1) { // TODO move this to simulation? also add param for name
+    std::ifstream f("./assets/initial_configurations.json");
+    json configurations = json::parse(f);
 
-std::vector<Object> create_objects() {
-    double m = std::pow(10, 16);
+    std::vector<Object> objects;
 
-    Object object1({400, 300}, {70, 0}, {0, 0}, m / 10000);
-    Object object2({400, 550}, {-60, 0}, {0, 0}, m / 100);
-    Object object3({400, 400}, {00, 0}, {0, 0}, m);
-    // Object object1({400, 400}, {0, 0}, {0, 0}, m);
-    // Object object2({400, 500}, {70, 0}, {0, 0}, m / 1000);
+    for (auto& config : configurations) {
+        if (config["id"] == n) { // TODO protect against duplicate ids
+            for (auto& body : config["bodies"]) {
+                Vector2D position(body["position"][0], body["position"][1]);
+                Vector2D velocity(body["velocity"][0], body["velocity"][1]);
 
-    return std::vector<Object> {object1, object2, object3};
-}
+                if (config["G"] == 1) {
+                    velocity = velocity * sqrt(G); // Simulation uses G=39.478. Need to normalize
+                }
 
-double pairwise_potential(const Object& a, const Object& b) {
-    double r = (a.position - b.position).magnitude();
-    return -G * a.mass * b.mass / r;
-}
-
-double compute_total_potential_energy(const std::vector<Object>& objects) {
-    double total = 0.0;
-
-    for (size_t i = 0; i < objects.size(); ++i) {
-        for (size_t j = i + 1; j < objects.size(); ++j) {
-            total += pairwise_potential(objects[i], objects[j]);
+                objects.push_back(Object(position, velocity, body["mass"], 0, body["color"]));
+                // objects.push_back(Object(position, velocity, body["mass"], 1));
+            }
+            
         }
     }
 
-    return total;
-}
-
-double compute_total_energy(const std::vector<Object>& objects) {
-    double kinetic = 0.0;
-
-    for (const Object& obj : objects) {
-        kinetic += obj.get_kinetic_energy();
-    }
-
-    double potential = compute_total_potential_energy(objects);
-
-    return kinetic + potential;
+    return objects;
 }
 
 int main()
@@ -74,20 +51,24 @@ int main()
     window.setPosition({100,100});
     window.setVerticalSyncEnabled(true);
 
+    Renderer renderer(window);
+
     bool paused = false;
     
-    const double dt = 0.00025f;
-    double time = 0.0f;
+    double dt = 0.00002;
+    double time = 0.0;
     int steps = 0;
-    int buffer = 5;
+    const int draw_buffer = 10;
+    const int print_buffer = draw_buffer * 200;
     
-    std::vector<Object> objects = create_objects();
-
-    std::vector<std::deque<sf::Vector2f>> paths(objects.size());
+    const int n = 3;
+    // Simulation simulation(std::make_unique<DirectForceCalculator>(), create_objects(n));
+    Simulation simulation(std::make_unique<BarnesHutCalculator>(), create_objects(n));
 
     sf::Clock clock;
 
-    const double initial_energy = compute_total_energy(objects);
+    double initial_energy = simulation.compute_total_energy();
+    double initial_angular_momentum = simulation.compute_total_angular_momentum();
 
     while (window.isOpen())
     {
@@ -113,66 +94,77 @@ int main()
                     break;
                 
                 case sf::Keyboard::Key::C: // Clear window
-                    objects.clear();
-                    paths.clear();
-                    window.clear();
+                    simulation.clear();
+                    renderer.clear();
                     break;
 
-                case sf::Keyboard::Key::B: // Add new objects
-                    std::vector<Object> new_objects = create_objects();
-                    for (Object object : new_objects) {
-                        objects.push_back(object);
-                        paths.push_back(std::deque<sf::Vector2f>());
-                        draw_object(window, object);
-                    }
+                case sf::Keyboard::Key::R: // Reset configuration
+                {
+                    simulation.clear();
+                    renderer.clear();
+                    std::vector<Object> objs = simulation.add_objects(create_objects(n));
+                    renderer.draw(objs);
+                    initial_energy = simulation.compute_total_energy(); // recompute initial energy
+                    initial_angular_momentum = simulation.compute_total_angular_momentum();
+                    break;
+                }
+
+                case sf::Keyboard::Key::B: // Adds a new object in a random location
+                {
+                    Object object = simulation.add_random_object();
+                    initial_energy = simulation.compute_total_energy(); // recompute initial energy
+                    initial_angular_momentum = simulation.compute_total_angular_momentum();
+                    renderer.draw(object);
+                    break;
+                }
+
+                case sf::Keyboard::Key::Equal:
+                    dt *= 1.5;
+                    break;
+
+                case sf::Keyboard::Key::Hyphen:
+                    dt /= 1.5;
                     break;
                 }
             }
         }
 
-        window.display(); // redraw window here incase window is paused.
+        renderer.display(); // redraw window here incase window is paused.
 
         if (paused) {
             continue;
         }
 
-        if (steps % buffer == 0) { window.clear(); }
+        if (steps % draw_buffer == 0) { 
+            renderer.clear();
+            simulation.update_paths();
+            renderer.draw(simulation.objects);
+        }
         
-        for (int i = 0; i < objects.size(); i++) {
-            Object& obj = objects[i];
+        simulation.step(dt);
+        for (int i = 0; i < simulation.objects.size(); i++) {
+            Object& obj = simulation.objects[i];
 
-            Vector2D force = obj.compute_force(objects);
-
-            if (steps % buffer == 0) {
-
-                std::deque<sf::Vector2f>& path = paths[i];
-                path.push_back(obj.position);
-                if (path.size() > MAX_PATH_LEN) {
-                    path.pop_front();
-                }
-
-                draw_object(window, obj);
-                draw_path(window, path);
-            }
-
-            if (steps % (buffer * 250) == 0) {
-
-                double drift = 100 * (initial_energy - compute_total_energy(objects)) / initial_energy;
+            if (steps % print_buffer == 0) {
 
                 std::cout << std::fixed << std::setprecision(2);
 
                 std::cout << "time " << std::setw(5) << time << "  "
                           << "obj " << std::setw(2) << i << "  "
                           << "pos: (" << std::setw(7) << obj.position.x << ", " << std::setw(7) << obj.position.y << ")  "
-                          << "vel: (" << std::setw(7) << obj.velocity.x << ", " << std::setw(7) << obj.velocity.y << ")  "
-                          << "energy drift: " << std::setw(5) << drift << "%\n";
+                          << "vel: (" << std::setw(7) << obj.velocity.x << ", " << std::setw(7) << obj.velocity.y << ")  " << std::endl;
             }
-
-            obj.step(objects, force, dt);
-            
         }
 
-        if (steps % (buffer * 250) == 0) { std::cout << "fps: " << fps << std::endl; }
+        if (steps % print_buffer == 0) { 
+
+            double energy_drift = 100 * (initial_energy - simulation.compute_total_energy()) / initial_energy;
+            double angular_momentum_drift = 100 * (initial_angular_momentum - simulation.compute_total_angular_momentum()) / initial_angular_momentum;
+
+            std::cout << "fps: " << fps / draw_buffer << "  "
+                      << "energy drift: " << std::scientific << std::setw(5) << energy_drift << "% " 
+                      << "angular momentum drift: " << std::scientific << std::setw(5) << angular_momentum_drift << "% " << std::endl; 
+        }
 
         steps += 1;
         time += dt;

@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "./SFML/include",
-                "${workspaceFolder}/build/_deps/sfml-src/include"
+                "${workspaceFolder}/build/_deps/sfml-src/include",
+                "${workspaceFolder}/build/_deps/**"
             ],
             "defines": [
                 "_DEBUG",

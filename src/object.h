@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <queue>
 #include "geometry.h"
 
 /**
@@ -13,17 +14,16 @@ class Object {
         Vector2D velocity;
         Vector2D acceleration;
         double mass;
+        std::deque<sf::Vector2f> path;
+        int id;
+        std::string color;
 
-        Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass);
+        Object(Vector2D position, Vector2D velocity, double mass, int id = 0, std::string color = "white");
 
         friend std::ostream& operator<<(std::ostream& os, const Object& o);
         friend bool operator==(const Object& o1, const Object& o2);
 
-        /**
-         * Takes in a list of simulation objects and a timestep dt and updates the object's 
-         * position, velocity, and acceleration.
-         */
-        void step(const std::vector<Object>& objects, Vector2D force, double dt);
+        void update_path();
 
         /**
          * Computes the net force on the object based on the positions of the given list of objects.
@@ -31,6 +31,7 @@ class Object {
         Vector2D compute_force(const std::vector<Object>& objects);
 
         double get_kinetic_energy() const;
+        double get_angular_momentum() const;
 
     private:
         /**
