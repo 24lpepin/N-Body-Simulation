@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.20)
+
 project(orbital_simulation)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
+
+# --------------------
+# Dependencies
+# --------------------
 
 FetchContent_Declare(
     SFML
@@ -22,22 +27,60 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(nlohmann_json)
 
-add_executable(
-    orbital_simulation
-    src/main.cpp
-    src/geometry.cpp
-    src/object.cpp
+# --------------------
+# Simulation library
+# --------------------
+
+add_library(simulation
     src/simulation.cpp
-    src/renderer.cpp
+    src/object.cpp
+    src/geometry.cpp
+
     src/forces/direct_force_calculator.cpp
     src/forces/barnes_hut_calculator.cpp
 )
 
+target_include_directories(simulation PUBLIC
+    src
+)
+
+target_link_libraries(simulation
+    PUBLIC
+    SFML::Graphics
+    SFML::Window
+    SFML::System
+)
+# --------------------
+# Demo
+# --------------------
+
+add_executable(
+    demo
+    src/main.cpp
+    src/renderer.cpp
+)
+
 target_link_libraries(
-    orbital_simulation
+    demo
     PRIVATE
-    sfml-graphics
-    sfml-window
-    sfml-system
+    simulation
+    SFML::Graphics
+    SFML::Window
+    SFML::System
     nlohmann_json::nlohmann_json
+)
+
+# --------------------
+# Benchmark
+# --------------------
+
+add_executable(
+    benchmark
+    src/benchmark.cpp
+)
+
+target_link_libraries(
+    benchmark
+    PRIVATE
+    simulation
 )

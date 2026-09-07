@@ -67,12 +67,12 @@ void Simulation::step(double dt) {
 
     
 
-    for (int i = objects.size() - 1; i >= 0; i--) {
-        if (objects[i].position.magnitude() >= 50) {
-            std::cout << "Object " << i << " has been removed" << std::endl;
-            objects.erase(objects.begin() + i);
-        }
-    }
+    // for (int i = objects.size() - 1; i >= 0; i--) {
+    //     if (objects[i].position.magnitude() >= 50) {
+    //         std::cout << "Object " << i << " has been removed" << std::endl;
+    //         objects.erase(objects.begin() + i);
+    //     }
+    // }
 }
 
 void Simulation::update_paths() {
