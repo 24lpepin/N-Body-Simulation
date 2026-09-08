@@ -21,7 +21,8 @@ private:
     void draw_path(const Object& object);
     void draw_paths(const std::vector<Object>& objects);
 
-    Vector2D world_to_screen(const sf::Vector2f& v); // Converts given position in au to pixels
+    sf::Vector2f world_to_screen(const sf::Vector2f& v); // Converts given position in au to pixels
 
     sf::Color get_color(const Object& object);
+    sf::Vector2f vector_to_sfml(const Vector2D& v);
 };

@@ -46,9 +46,6 @@ target_include_directories(simulation PUBLIC
 
 target_link_libraries(simulation
     PUBLIC
-    SFML::Graphics
-    SFML::Window
-    SFML::System
 )
 # --------------------
 # Demo

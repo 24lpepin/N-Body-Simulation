@@ -14,7 +14,7 @@ class Object {
         Vector2D velocity;
         Vector2D acceleration;
         double mass;
-        std::deque<sf::Vector2f> path;
+        std::deque<Vector2D> path;
         int id;
         std::string color;
 

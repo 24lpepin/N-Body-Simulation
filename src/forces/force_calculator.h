@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <array>
+
 #include "../object.h"
 
 class ForceCalculator {
