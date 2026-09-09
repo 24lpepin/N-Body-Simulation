@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <vector>
 #include <queue>
+#include <string>
 
 inline std::unordered_map<std::string, sf::Color> COLOR_MAP = {
     {"red", sf::Color::Red}, 

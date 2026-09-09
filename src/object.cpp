@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <string>
 
 Object::Object(Vector2D position, Vector2D velocity, double mass, int id, std::string color): 
     position(position), velocity(velocity), acceleration(0,0), mass(mass), id(id), color(color), path() { }

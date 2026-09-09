@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <string>
 
 /**
  * The Object class stores relevant information about a simulation object and provides methods to 
