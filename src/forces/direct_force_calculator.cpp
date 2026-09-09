@@ -1,7 +1,9 @@
 #include "direct_force_calculator.h"
 #include "../object.h"
-#include "../geometry.h"
 #include "../const.h"
+
+#include <cmath>
+#include <vector>
 
 void DirectForceCalculator::update_accelerations(std::vector<Object>& objects) {
     for (auto& obj1 : objects) {

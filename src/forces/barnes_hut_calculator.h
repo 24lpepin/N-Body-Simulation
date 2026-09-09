@@ -1,5 +1,11 @@
+#pragma once
+
 #include "force_calculator.h"
 #include "../object.h"
+
+#include <array>
+#include <memory>
+#include <vector>
 
 class BarnesHutCalculator : public ForceCalculator {
 public:

@@ -1,18 +1,13 @@
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <cmath>
-#include <vector>
-#include <queue>
-#include <chrono>
-#include <random>
-
-#include "geometry.h"
 #include "object.h"
-#include "const.h"
 #include "simulation.h"
 #include "forces/direct_force_calculator.h"
 #include "forces/barnes_hut_calculator.h"
+
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <random>
+#include <memory>
 
 std::vector<Object> generate_bodies(int n, unsigned seed = 42) {
     std::mt19937_64 rng(seed);

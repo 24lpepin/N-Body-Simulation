@@ -1,7 +1,11 @@
-#include <queue>
+#pragma once
+
 #include "geometry.h"
 #include "object.h"
+
 #include <./SFML/Graphics.hpp>
+
+#include <vector>
 
 class Renderer {
 public:

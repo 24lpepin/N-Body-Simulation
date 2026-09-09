@@ -1,7 +1,8 @@
-#include <iostream>
-#include <cmath>
 #include "geometry.h"
 #include "const.h"
+
+#include <iostream>
+#include <cmath>
 
 Vector2D::Vector2D(double x, double y): x(x), y(y) { }
 

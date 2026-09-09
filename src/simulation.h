@@ -1,9 +1,10 @@
-#include <iostream>
-#include <vector>
-#include <memory>
 #include "geometry.h"
 #include "object.h"
 #include "forces/force_calculator.h"
+
+#include <iostream>
+#include <vector>
+#include <memory>
 
 class Simulation {
 public:

@@ -4,6 +4,8 @@
 #include "../const.h"
 
 #include <algorithm>
+#include <memory>
+#include <vector>
 
 BarnesHutCalculator::BarnesHutCalculator(double theta): theta(theta) {}
 

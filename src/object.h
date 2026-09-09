@@ -1,8 +1,10 @@
 #pragma once
+
+#include "geometry.h"
+
 #include <iostream>
 #include <vector>
 #include <queue>
-#include "geometry.h"
 
 /**
  * The Object class stores relevant information about a simulation object and provides methods to 

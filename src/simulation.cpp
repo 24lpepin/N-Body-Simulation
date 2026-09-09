@@ -1,10 +1,13 @@
-#include <iostream>
-#include <vector>
-#include <random>
 #include "geometry.h"
 #include "object.h"
 #include "const.h"
 #include "simulation.h"
+#include "forces/force_calculator.h"
+
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <random>
 
 Simulation::Simulation(
     std::unique_ptr<ForceCalculator> force_calculator,

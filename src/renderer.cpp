@@ -1,9 +1,13 @@
-#include <queue>
 #include "geometry.h"
 #include "object.h"
 #include "const.h"
-#include <./SFML/Graphics.hpp>
 #include "renderer.h"
+
+#include <./SFML/Graphics.hpp>
+
+#include <unordered_map>
+#include <vector>
+#include <queue>
 
 inline std::unordered_map<std::string, sf::Color> COLOR_MAP = {
     {"red", sf::Color::Red}, 
