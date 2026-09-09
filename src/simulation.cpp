@@ -33,7 +33,6 @@ std::vector<Object> Simulation::add_random_objects(int n) {
         Vector2D x(normal_distrib(gen), normal_distrib(gen));
         Vector2D v((2 * uniform_distrib(gen) - 1), (2 * uniform_distrib(gen) - 1));
         double m = uniform_distrib(gen);
-        v = sqrt(G) * v;
         // Object object(x, v, {0,0}, uniform_distrib(gen) * m);
         int id = round(100 * uniform_distrib(gen));
         Object object(x, v, m, id);
@@ -90,7 +89,7 @@ void Simulation::clear() {
 
 double Simulation::pairwise_potential(const Object& a, const Object& b) {
     double r = (a.position - b.position).magnitude();
-    return -G * a.mass * b.mass / r;
+    return -1 * a.mass * b.mass / r;
 }
 
 double Simulation::compute_total_potential_energy() {

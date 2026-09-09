@@ -3,7 +3,6 @@
         "id": 1,
         "name": "Sun and Earth",
         "description": "abc",
-        "G": 39.478,
         "bodies": [
             {
                 "mass": 1,
@@ -14,7 +13,7 @@
             {
                 "mass": 0.000003,
                 "position": [1, 0],
-                "velocity": [0, 6.28],
+                "velocity": [0, 1],
                 "color": "yellow"
             }
         ]
@@ -23,7 +22,6 @@
         "id": 2,
         "name": "Figure 8",
         "description": "abc",
-        "G": 1,
         "bodies": [
             {
                 "mass": 1,
@@ -49,7 +47,6 @@
         "id": 3,
         "name": "Lagrange Triangle",
         "description": "",
-        "G": 1,
         "bodies": [
             {
                 "mass": 1,
@@ -75,7 +72,6 @@
         "id": 4,
         "name": "Square Central Configuration",
         "description": "Four equal masses at the corners of a rotating square.",
-        "G": 1,
         "bodies": [
             {
                 "mass": 1,
@@ -107,7 +103,6 @@
         "id": 5,
         "name": "Pentagon Ring",
         "description": "Five equal masses in a regular pentagon rotating about the center. UNSTABLE",
-        "G": 1,
         "bodies": [
             {
                 "mass": 1,
@@ -145,7 +140,6 @@
         "id": 6,
         "name": "Hexagon Ring",
         "description": "Six equal masses in a rotating hexagonal central configuration.",
-        "G": 1,
         "bodies": [
             {
                 "mass": 1,
@@ -189,7 +183,6 @@
         "id": 7,
         "name": "Maxwell Ring",
         "description": "A heavy central mass surrounded by orbiting equal masses.",
-        "G": 1,
         "bodies": [
             {
                 "mass": 20,
@@ -227,7 +220,6 @@
         "id": 8,
         "name": "Double Square Rosette",
         "description": "Two counter-rotating square rings.",
-        "G": 1,
         "bodies": [
             {
                 "mass": 1,
@@ -283,7 +275,6 @@
         "id": 9,
         "name": "Euler-Moulton Line",
         "description": "Five collinear masses rotating as a rigid structure.",
-        "G": 1,
         "bodies": [
             {
                 "mass": 1,

@@ -7,7 +7,6 @@
 
 #include "geometry.h"
 #include "object.h"
-#include "const.h"
 #include "simulation.h"
 #include "renderer.h"
 #include "forces/direct_force_calculator.h"
@@ -30,11 +29,6 @@ std::vector<Object> create_objects(int n = 1) { // TODO move this to simulation?
             for (auto& body : config["bodies"]) {
                 Vector2D position(body["position"][0], body["position"][1]);
                 Vector2D velocity(body["velocity"][0], body["velocity"][1]);
-
-                if (config["G"] == 1) {
-                    velocity = velocity * sqrt(G); // Simulation uses G=39.478. Need to normalize
-                }
-
                 objects.push_back(Object(position, velocity, body["mass"], 0, body["color"]));
                 // objects.push_back(Object(position, velocity, body["mass"], 1));
             }

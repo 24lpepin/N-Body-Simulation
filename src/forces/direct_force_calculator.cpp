@@ -14,7 +14,7 @@ void DirectForceCalculator::update_accelerations(std::vector<Object>& objects) {
             Vector2D r = obj2.position - obj1.position;
             double r2 = r.x * r.x + r.y * r.y + EPSILON * EPSILON;
             double r_mag = sqrt(r2);
-            double f = G * obj1.mass * obj2.mass / r2;
+            double f = obj1.mass * obj2.mass / r2;
             force = force + (f / r_mag) * r;
         }
 

@@ -35,7 +35,7 @@ Vector2D Object::compute_force(const std::vector<Object>& objects) {
         Vector2D r = object.position - position;
         double r2 = r.x * r.x + r.y * r.y + EPSILON * EPSILON;
         double r_mag = sqrt(r2);
-        double f = G * object.mass * mass / r2;
+        double f = object.mass * mass / r2;
         force = force + (f / r_mag) * r;
     }
     return force;

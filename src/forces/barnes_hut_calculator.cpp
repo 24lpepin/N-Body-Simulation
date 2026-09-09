@@ -1,7 +1,6 @@
 #include "barnes_hut_calculator.h"
 #include "../object.h"
 #include "../geometry.h"
-#include "../const.h"
 
 #include <algorithm>
 #include <memory>
@@ -43,7 +42,7 @@ Vector2D BarnesHutCalculator::calculate_acceleration(Node* node, Object& object)
             return Vector2D(0, 0);
         }
 
-        return G * node->body->mass * direction /
+        return node->body->mass * direction /
                (distance * distance * distance);
     }
 
@@ -59,7 +58,7 @@ Vector2D BarnesHutCalculator::calculate_acceleration(Node* node, Object& object)
 
         // Far enough to treat as one body
         if (width / distance < theta) {
-            return G * node->mass * direction /
+            return node->mass * direction /
                 (distance * distance * distance);
         }
 
