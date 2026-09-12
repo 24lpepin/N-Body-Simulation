@@ -1,43 +1,15 @@
 #include <iostream>
 #include <iomanip>
-#include <fstream>
-#include <cmath>
 #include <vector>
-#include <queue>
 
-#include "geometry.h"
 #include "object.h"
+#include "object_loader.h"
 #include "simulation.h"
 #include "renderer.h"
 #include "forces/direct_force_calculator.h"
 #include "forces/barnes_hut_calculator.h"
 
 #include <./SFML/Graphics.hpp>
-#include <nlohmann/json.hpp>
-
-// for convenience
-using json = nlohmann::json;
-
-std::vector<Object> create_objects(int n = 1) { // TODO move this to simulation? also add param for name
-    std::ifstream f("./assets/initial_configurations.json");
-    json configurations = json::parse(f);
-
-    std::vector<Object> objects;
-
-    for (auto& config : configurations) {
-        if (config["id"] == n) { // TODO protect against duplicate ids
-            for (auto& body : config["bodies"]) {
-                Vector2D position(body["position"][0], body["position"][1]);
-                Vector2D velocity(body["velocity"][0], body["velocity"][1]);
-                objects.push_back(Object(position, velocity, body["mass"], 0, body["color"]));
-                // objects.push_back(Object(position, velocity, body["mass"], 1));
-            }
-            
-        }
-    }
-
-    return objects;
-}
 
 int main()
 {
@@ -55,9 +27,10 @@ int main()
     const int draw_buffer = 10;
     const int print_buffer = draw_buffer * 200;
     
-    const int n = 3;
+    const int id = 3;
     // Simulation simulation(std::make_unique<DirectForceCalculator>(), create_objects(n));
-    Simulation simulation(std::make_unique<BarnesHutCalculator>(), create_objects(n));
+    ObjectLoader object_loader;
+    Simulation simulation(std::make_unique<BarnesHutCalculator>(), object_loader.load_objects(id));
 
     sf::Clock clock;
 
@@ -67,7 +40,7 @@ int main()
     while (window.isOpen())
     {
         sf::Time elapsed = clock.restart();
-        float fps = 1.0f / elapsed.asSeconds();
+        float steps_per_sec = 1.0f / elapsed.asSeconds();
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>()) {
@@ -96,7 +69,7 @@ int main()
                 {
                     simulation.clear();
                     renderer.clear();
-                    std::vector<Object> objs = simulation.add_objects(create_objects(n));
+                    std::vector<Object> objs = simulation.add_objects(object_loader.load_objects(id));
                     renderer.draw(objs);
                     initial_energy = simulation.compute_total_energy(); // recompute initial energy
                     initial_angular_momentum = simulation.compute_total_angular_momentum();
@@ -155,7 +128,7 @@ int main()
             double energy_drift = 100 * (initial_energy - simulation.compute_total_energy()) / initial_energy;
             double angular_momentum_drift = 100 * (initial_angular_momentum - simulation.compute_total_angular_momentum()) / initial_angular_momentum;
 
-            std::cout << "fps: " << fps / draw_buffer << "  "
+            std::cout << "steps/sec: " << steps_per_sec << "  "
                       << "energy drift: " << std::scientific << std::setw(5) << energy_drift << "% " 
                       << "angular momentum drift: " << std::scientific << std::setw(5) << angular_momentum_drift << "% " << std::endl; 
         }

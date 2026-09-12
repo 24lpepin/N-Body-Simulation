@@ -34,6 +34,7 @@ FetchContent_MakeAvailable(nlohmann_json)
 add_library(simulation
     src/simulation.cpp
     src/object.cpp
+    src/object_loader.cpp
     src/geometry.cpp
 
     src/forces/direct_force_calculator.cpp
@@ -46,6 +47,7 @@ target_include_directories(simulation PUBLIC
 
 target_link_libraries(simulation
     PUBLIC
+    nlohmann_json::nlohmann_json
 )
 # --------------------
 # Demo
@@ -64,7 +66,6 @@ target_link_libraries(
     SFML::Graphics
     SFML::Window
     SFML::System
-    nlohmann_json::nlohmann_json
 )
 
 # --------------------
