@@ -15,8 +15,10 @@ class Object {
         Vector2D acceleration;
         double mass;
         std::deque<sf::Vector2f> path;
+        int id;
+        std::string color;
 
-        Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass);
+        Object(Vector2D position, Vector2D velocity, double mass, int id = 0, std::string color = "white");
 
         friend std::ostream& operator<<(std::ostream& os, const Object& o);
         friend bool operator==(const Object& o1, const Object& o2);
@@ -29,6 +31,7 @@ class Object {
         Vector2D compute_force(const std::vector<Object>& objects);
 
         double get_kinetic_energy() const;
+        double get_angular_momentum() const;
 
     private:
         /**

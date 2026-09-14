@@ -6,37 +6,50 @@
 #include "const.h"
 #include "simulation.h"
 
-Simulation::Simulation(std::vector<Object> objects): objects(objects) {}
+Simulation::Simulation(
+    std::unique_ptr<ForceCalculator> force_calculator,
+    std::vector<Object> objects
+): force_calculator(std::move(force_calculator)), objects(std::move(objects)) {}
 
 Object Simulation::add_random_object() {
     return add_random_objects(1)[0];
 }
 
 std::vector<Object> Simulation::add_random_objects(int n) {
-    double m = std::pow(10, 15);
+    // double m = std::pow(10, 15);
+    // double m = 1;
     std::vector<Object> new_objects{};
 
     std::random_device rd; 
     std::mt19937 gen(rd()); 
     std::uniform_real_distribution<> uniform_distrib(0, 1);
-    std::normal_distribution<> normal_distrib(400, 125);
+    // std::normal_distribution<> normal_distrib(400, 125);
+    std::normal_distribution<> normal_distrib(0, 1);
 
     for (int i = 0; i < n; i++) {
         Vector2D x(normal_distrib(gen), normal_distrib(gen));
         Vector2D v((2 * uniform_distrib(gen) - 1), (2 * uniform_distrib(gen) - 1));
-        v = 100 * v;
-        Object object(x, v, {0,0}, 2000 * uniform_distrib(gen) * m);
+        double m = uniform_distrib(gen);
+        v = sqrt(G) * v;
+        // Object object(x, v, {0,0}, uniform_distrib(gen) * m);
+        int id = round(100 * uniform_distrib(gen));
+        Object object(x, v, m, id);
         objects.push_back(object);
         new_objects.push_back(object);
     }
     return new_objects;
 }
 
+std::vector<Object> Simulation::add_objects(const std::vector<Object>& objs) {
+    for (auto& obj : objs) {
+        objects.push_back(obj);
+    }
+    return objs;
+}
+
 void Simulation::step(double dt) {
     // Compute forces at t
-    for (auto& obj : objects) {
-        obj.acceleration = obj.compute_force(objects) / obj.mass;
-    }
+    force_calculator->update_accelerations(objects);
 
     // Half-step velocity + position
     for (auto& obj : objects) {
@@ -45,14 +58,21 @@ void Simulation::step(double dt) {
     }
 
     // Recompute forces at t + dt
-    for (auto& obj : objects) {
-        obj.acceleration = obj.compute_force(objects) / obj.mass;
-    }
+    force_calculator->update_accelerations(objects);
 
     // Finalize velocity
     for (auto& obj : objects) {
         obj.velocity = obj.velocity + 0.5 * obj.acceleration * dt;
     }
+
+    
+
+    // for (int i = objects.size() - 1; i >= 0; i--) {
+    //     if (objects[i].position.magnitude() >= 50) {
+    //         std::cout << "Object " << i << " has been removed" << std::endl;
+    //         objects.erase(objects.begin() + i);
+    //     }
+    // }
 }
 
 void Simulation::update_paths() {
@@ -63,4 +83,42 @@ void Simulation::update_paths() {
 
 void Simulation::clear() {
     objects.clear();
+}
+
+double Simulation::pairwise_potential(const Object& a, const Object& b) {
+    double r = (a.position - b.position).magnitude();
+    return -G * a.mass * b.mass / r;
+}
+
+double Simulation::compute_total_potential_energy() {
+    double total = 0.0;
+
+    for (size_t i = 0; i < objects.size(); ++i) {
+        for (size_t j = i + 1; j < objects.size(); ++j) {
+            total += pairwise_potential(objects[i], objects[j]);
+        }
+    }
+
+    return total;
+}
+
+double Simulation::compute_total_energy() {
+    double kinetic = 0.0;
+
+    for (const Object& obj : objects) {
+        kinetic += obj.get_kinetic_energy();
+    }
+
+    double potential = compute_total_potential_energy();
+
+    return kinetic + potential;
+}
+
+double Simulation::compute_total_angular_momentum() {
+    double total = 0.0;
+
+    for (const Object& obj : objects) {
+        total = total + obj.get_angular_momentum();
+    }
+    return total;
 }

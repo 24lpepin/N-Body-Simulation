@@ -5,11 +5,8 @@
 #include "object.h"
 #include "const.h"
 
-Object::Object(Vector2D position, Vector2D velocity, Vector2D acceleration, double mass): 
-    position(position), velocity(velocity), acceleration(acceleration), mass(mass) 
-{ 
-    path = std::deque<sf::Vector2f>();
-}
+Object::Object(Vector2D position, Vector2D velocity, double mass, int id, std::string color): 
+    position(position), velocity(velocity), acceleration(0,0), mass(mass), id(id), color(color), path() { }
 
 std::ostream& operator<<(std::ostream& os, const Object& o) {
     return os << "position: " << o.position << std::endl 
@@ -44,6 +41,10 @@ Vector2D Object::compute_force(const std::vector<Object>& objects) {
 
 double Object::get_kinetic_energy() const {
     return 0.5 * mass * (velocity.x * velocity.x + velocity.y * velocity.y);
+}
+
+double Object::get_angular_momentum() const {
+    return mass * (position.x * velocity.y - position.y * velocity.x);
 }
 
 /**
